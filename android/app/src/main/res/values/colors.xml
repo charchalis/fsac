@@ -18,4 +18,5 @@
  <color name="black">#000000</color>
  <color name="polaco">#091212</color>
 
+    <color name="bootsplash_background">#091212</color>
 </resources>
