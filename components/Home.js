@@ -17,6 +17,8 @@ import {
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import RNBootSplash from "react-native-bootsplash";
+
 import AnimatedRingExample from './AnimatedRingExample'
 import Settings from './Settings'
 import Friends from './Friends'
@@ -32,7 +34,12 @@ const Tab = createBottomTabNavigator();
 
 function Home({navigation}) {
 
-    const [isFsacoso, setFsacoso] = useState(false);
+  const [isFsacoso, setFsacoso] = useState(false);
+
+  useEffect(() => {
+    RNBootSplash.hide({fade: true});
+  }, []);
+
 
   return (
     <View style={{flex: 1, backgroundColor: "#091212"}}>
