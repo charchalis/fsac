@@ -17,9 +17,7 @@ const CreateAccount =  ({navigation}) => {
     const [warning, setWarning] = useState(false);
     
 
-    useEffect(() =>{
-        RNBootSplash.hide({fade: true}) 
-    }, []);
+    
 
     useEffect(() =>{
         
@@ -37,6 +35,9 @@ const CreateAccount =  ({navigation}) => {
             setWarning(true);
             return false;
         }
+        
+        //send stuff to backend
+
         navigation.navigate(Home);
     }
 
@@ -55,7 +56,7 @@ const CreateAccount =  ({navigation}) => {
 
         await launchImageLibrary(options, (response) => {
             console.log("response: ", response)
-            setImageUri(response.assets[0].uri);
+            try{setImageUri(response.assets[0].uri)}catch{(e) => console.log(e)};
         })
     }
 
