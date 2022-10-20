@@ -1,23 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  Text,
-  View,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
-
-
+import { Text, View, TouchableOpacity } from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {
-  faEye, faPerson, faHouse, faGear
-} from "@fortawesome/free-solid-svg-icons";
-
+import { faEye, faPerson, faHouse, faGear } from "@fortawesome/free-solid-svg-icons";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
 import RNBootSplash from "react-native-bootsplash";
+
+import socket from '../logic/socket';
 
 import AnimatedRingExample from './AnimatedRingExample'
 import Settings from './Settings'
@@ -26,6 +14,8 @@ import Fsacs from './Fsacs'
 import Events from './Events'
 
  
+
+
 
 
 

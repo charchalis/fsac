@@ -25,9 +25,7 @@ const CreateAccount =  ({navigation}) => {
         
         if(warning){
             const begone = async () => {
-                console.log("going to sleep")
                 await new Promise(r => setTimeout(r, 1000))
-                console.log("waking up")
                 setWarning(false);
             };
             begone();    
