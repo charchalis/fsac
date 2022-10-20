@@ -12,6 +12,7 @@ const Events = ({navigation}) => {
         <Text style={{ borderColor: "#56b643", borderWidth: 3, padding: "20%"}}>fds</Text>
         <Text style={{ borderColor: "#56b643", borderWidth: 3, padding: "20%"}}>fds</Text>
         <Text style={{ borderColor: "#56b643", borderWidth: 3, padding: "20%"}}>fds</Text>
+        <View style={{padding: "15%"}}/>
         </ScrollView>
       </SafeAreaView>
     );
