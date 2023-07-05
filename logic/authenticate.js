@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const authenticate = async () => { 
     
@@ -28,7 +29,11 @@ const postToken = async (token) => {
     console.log("posting token")
     console.log("token:", token)
     console.log("jsonToken: ", JSON.stringify({token: token}))
-
+    
+    const url = "http://192.168.1.95:3000/authenticate";
+    const data = {token: token};
+    
+/*
     await fetch("http://192.168.1.95:3000/authenticate", {
         method: "POST",
         headers: {
@@ -39,9 +44,12 @@ const postToken = async (token) => {
     })
     .then((res) => {console.log("made it here: ", res.body); return res.json()}).then((resJson) => fetched = resJson
     ).catch((err)=>{console.log(err)});
-
-    console.log("fetched", fetched)
-    return fetched;
+*/
+    try{
+        await axios.post(url, data).then(response => fetched = response.data);
+        console.log("fetched", fetched)
+        return fetched;
+    }catch(err){return {success: false}}
 }
 
 
