@@ -3,20 +3,39 @@ import {View, Text, TextInput, TouchableOpacity} from 'react-native';
 import RNBootSplash from "react-native-bootsplash";
 
 import CreateAccount from './CreateAccount';
- 
+
+import authenticate from '../logic/authenticate';
+
 const Login = ({navigation}) => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     useEffect(() =>{
-        console.log("getting tokens from backend... not really")
-        //const sleep = ms => new Promise(r => setTimeout(r, 2000));
-        //const wait = sleep();
-        if(false) navigation.navigate('Home');
-        else{
+        
+        const authentication = async () => await authenticate().then((res) => {
+            console.log(res)
+            console.log("authenticate: ", res.success);
+            
+            if(res.success) navigation.navigate('Home', res.user);
+            else RNBootSplash.hide({fade: true});
+
+            /*const userMock = {username: "popo",
+            token: "token",
+            firstName: "popo",
+            lastName: "popo",
+            imagePath: "popo"}
+
+            console.log("jfkldsçajflksçda")
+            navigation.navigate('Home', userMock);
+            console.log("jfkldsçajflksçda")
             RNBootSplash.hide({fade: true});
-        }
+            */
+        });
+        
+        authentication();
+
+        
     }, []);
 
 
@@ -32,7 +51,8 @@ const Login = ({navigation}) => {
             <TextInput value={password} onChangeText={setPassword} placeholder={'password'} secureTextEntry={true}
                 style={{borderWidth: 1, borderColor: "#555", paddingLeft: 10}}/>
             
-            <TouchableOpacity style={{borderWidth: 1, borderColor: "#555", alignItems: "center", width: 100, marginTop: 10}}>
+            <TouchableOpacity onPress={() => navigation.navigate(Home)}
+            style={{borderWidth: 1, borderColor: "#555", alignItems: "center", width: 100, marginTop: 10}}>
                 <Text style={{fontSize: 20, color: "#888"}}>login</Text>
             </TouchableOpacity>
 

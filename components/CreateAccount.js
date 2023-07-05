@@ -4,17 +4,22 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import RNBootSplash from "react-native-bootsplash";
 
 import Home from './Home';
+
+import postCreateAccount from '../logic/postCreateAccount';
+
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
  
 const CreateAccount =  ({navigation}) => {
 
-    const [imageUri, setImageUri] = useState(false);
+    const [userImage, setUserImage] = useState(false);
     const [username, setUsername] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [password, setPassword] = useState('');
+
     const [warning, setWarning] = useState(false);
+    const [usernameTaken, setUsernameTaken] = useState(false);
     
 
     
@@ -31,14 +36,12 @@ const CreateAccount =  ({navigation}) => {
     }, [warning]);
 
     const signIn = () => {
-        if (!imageUri || !username || !password || !firstName || !lastName){
+        if (!userImage || !username || !password || !firstName || !lastName){
             setWarning(true);
             return false;
         }
-        
-        //send stuff to backend
 
-        navigation.navigate(Home);
+        postCreateAccount(userImage, username, password, firstName, lastName, (success) => setUsernameTaken(!success));
     }
 
     const getImage = async () => {
@@ -55,10 +58,12 @@ const CreateAccount =  ({navigation}) => {
         };
 
         await launchImageLibrary(options, (response) => {
-            console.log("response: ", response)
-            try{setImageUri(response.assets[0].uri)}catch{(e) => console.log(e)};
+            try{setUserImage(response.assets[0])
+            }catch{(e) => console.log("popo")};
         })
     }
+
+    
 
     return (
         <View style={{flex: 1, backgroundColor: "#091212", padding: 20}}>
@@ -67,7 +72,7 @@ const CreateAccount =  ({navigation}) => {
                     
                     <TouchableOpacity onPress={ async () => getImage()} style={{marginRight: 10, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#555', borderRadius: 1000}}>
                         {
-                            imageUri ? <Image source={{uri: imageUri}} style={{backgroundColor: "#fff", height: 125, width: 125, borderRadius: 1000}}/>:
+                            userImage ? <Image source={{uri: userImage.uri}} style={{backgroundColor: "#fff", height: 125, width: 125, borderRadius: 1000}}/>:
                             <FontAwesomeIcon icon={faPlus} color={'#555'} size={50} style={{margin: 30}}/>
                         }
                     </TouchableOpacity>
@@ -90,6 +95,7 @@ const CreateAccount =  ({navigation}) => {
                         style={{flexDirection: 'row', borderWidth: 1, borderColor: "#555", marginBottom: 10, paddingLeft: 10}}/>
 
                 {warning? <Text style={{backgroundColor: "#f00", padding: 10, fontSize: 20}}>Fill everything, you idiot!</Text>:<></>}
+                {usernameTaken? <Text style={{backgroundColor: "#f00", padding: 10, fontSize: 20}}>username taken, you idiot!</Text>:<></>}
             </View>
 
             <TouchableOpacity onPress={ () => signIn()} style={{alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#555', borderRadius: 10}}>
@@ -100,7 +106,7 @@ const CreateAccount =  ({navigation}) => {
 
        
     );
-};
+}
  
  
  

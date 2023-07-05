@@ -16,7 +16,7 @@ import CreateAccount from './components/CreateAccount'
 import Login from './components/Login'
 import Home from './components/Home'
 import ChatBox from './components/ChatBox'
- 
+
 const Stack = createNativeStackNavigator();
 
 const App = () => {
