@@ -33,22 +33,10 @@ const postToken = async (token) => {
     const url = "http://192.168.1.95:3000/authenticate";
     const data = {token: token};
     
-/*
-    await fetch("http://192.168.1.95:3000/authenticate", {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        token: token,
-        body: JSON.stringify({token: token})
-    })
-    .then((res) => {console.log("made it here: ", res.body); return res.json()}).then((resJson) => fetched = resJson
-    ).catch((err)=>{console.log(err)});
-*/
     try{
-        await axios.post(url, data).then(response => fetched = response.data);
-        console.log("fetched", fetched)
-        return fetched;
+        const response = await axios.post(url, data)
+        console.log("response success:", response.status === 200)
+        return {success: response.status === 200}
     }catch(err){return {success: false}}
 }
 

@@ -1,25 +1,22 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const login = async (username, password) => { 
    
     let fetched;
 
     console.log("posting user data")
-    console.log("user:", username, " ", password)
+    console.log("username:", username, "password:", password)
 
-    await fetch("http://192.168.1.95:3000/login", {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({username: username, password: password})
-    })
-    .then((res) => {console.log("made it here: ", res.body); return res.json()}).then((resJson) => fetched = resJson
-    ).catch((err)=>{console.log(err)});
-
-    console.log("fetched", fetched)
-    return fetched; 
-
+    const url = "http://192.168.1.95:3000/login";
+    const data = {username: username, password: password};
+   
+    
+    try{
+        const response = await axios.post(url, data)
+        console.log("response success:", response.status === 200)
+        return {success: response.status === 200}
+    }catch(err){return {success: false}}
 }
 
 export default login;

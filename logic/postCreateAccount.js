@@ -4,28 +4,16 @@ import { sign } from 'react-native-pure-jwt'
 const postCreateAccount = async (userImage, username, password, firstName, lastName, callback) => {
     
     
+    console.log(userImage)
+    console.log(username)
+    console.log(password)
+    console.log(firstName)
+    console.log(lastName)
 
     const data = new FormData();
-    const secretData = new FormData();
-    
-    
-    secretData.append('username', username);
-    secretData.append('password', password);
-    
 
     data.append('username', username);
-
-    var token;
-
-    await sign(
-        secretData,
-        "harambe",
-        {alg: "HS256"}   
-    ).then((myToken) => token = myToken);
-    
-    console.log("token: ", token);
-
-    data.append('token', token)
+    data.append('password', password);
     data.append('firstName', firstName);
     data.append('lastName', lastName);
 
@@ -44,7 +32,12 @@ const postCreateAccount = async (userImage, username, password, firstName, lastN
         body: data
     };
 
-    fetch("http://192.168.1.95:3000/" + "createAccount", config)
+    const test = await (await fetch("http://192.168.1.254:3000/" + "createAccount", config)).json()
+    
+    console.log("test")
+    console.log(test)
+
+    fetch("http://192.168.1.254:3000/" + "createAccount", config)
     .then((res) => res.json()).then(async (resJson) => {
         console.log("no way")
         if(resJson.success){
@@ -58,6 +51,8 @@ const postCreateAccount = async (userImage, username, password, firstName, lastN
         callback(resJson.success)
 
     }).catch((err)=>{console.log(err)});
+    
+    
 
 }
 export default postCreateAccount;
