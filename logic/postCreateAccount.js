@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { sign } from 'react-native-pure-jwt'
 
-const postCreateAccount = async (userImage, username, password, firstName, lastName, callback) => {
+
+const postCreateAccount = async (userImage, username, password, firstName, lastName) => {
     
     
     console.log(userImage)
@@ -32,25 +32,31 @@ const postCreateAccount = async (userImage, username, password, firstName, lastN
         body: data
     };
 
-    const test = await (await fetch("http://192.168.1.254:3000/" + "createAccount", config)).json()
+    const test = await fetch("http://192.168.1.254:3000/" + "createAccount", config)
     
     console.log("test")
     console.log(test)
+    console.log("test.status")
+    console.log(test.status)
+    console.log("test.json()")
+    
+    const testJson = await test.json()
+    console.log(testJson)
 
-    fetch("http://192.168.1.254:3000/" + "createAccount", config)
-    .then((res) => res.json()).then(async (resJson) => {
-        console.log("no way")
-        if(resJson.success){
-            console.log("resJson success")
-            try {
-                await AsyncStorage.setItem('token',token)
-            } catch (e) {
-                console.log(e)
-            }
-        }
-        callback(resJson.success)
+    const token = testJson.token
+    
+    console.log(token)
 
-    }).catch((err)=>{console.log(err)});
+    
+    try {
+        await AsyncStorage.setItem('JWT_TOKEN', token);
+        console.log('Token stored successfully.');
+    } catch (error) {
+        console.log('Error storing data: ', error);
+    }
+    
+    return test.status === 200
+
     
     
 

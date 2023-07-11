@@ -2,10 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, Image, TextInput} from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import RNBootSplash from "react-native-bootsplash";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Home from './Home';
 
 import postCreateAccount from '../logic/postCreateAccount';
+import authenticate from '../logic/authenticate';
+
 
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
@@ -35,13 +38,31 @@ const CreateAccount =  ({navigation}) => {
         } 
     }, [warning]);
 
-    const signIn = () => {
+    const signIn = async () => {
         if (!userImage || !username || !password || !firstName || !lastName){
             setWarning(true);
             return false;
         }
 
-        postCreateAccount(userImage, username, password, firstName, lastName, (success) => setUsernameTaken(!success));
+        const postRequest = await postCreateAccount(userImage, username, password, firstName, lastName, (success) => setUsernameTaken(!success));
+        
+        if(postRequest){
+            try {
+                const token = await AsyncStorage.getItem('JWT_TOKEN');
+                if (token !== null) {
+                    console.log('Retrieved token: ', token);
+                    const authentication = await authenticate(token)
+                    console.log(authentication)
+                    
+                    if(authentication.success) navigation.navigate('Home', authentication.user);
+
+                } else {
+                    console.log('Token does not exist.');
+                }
+            }catch (error) {
+                console.log('Error retrieving data: ', error);
+            }
+        }
     }
 
     const getImage = async () => {

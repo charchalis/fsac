@@ -1,43 +1,27 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+const URL = "http://192.168.1.254:3000/"
 
-const authenticate = async () => { 
-    
-        //AsyncStorage.clear();
 
-        console.log("authenticating")
-        let token = await AsyncStorage.getItem('token');
-        console.log("token: ", token);
-
-        if(!token) return {success: false};
-        console.log("theres token")
-        
-        //token has a space in the beggining for some reason
-        token = token.replace(/\s/g, '');
-
-        const success = await postToken(token)
-    
-        return success;
-        
-    
-}
-
-const postToken = async (token) => {
-    
-    let fetched;
-
-    console.log("posting token")
-    console.log("token:", token)
-    console.log("jsonToken: ", JSON.stringify({token: token}))
-    
-    const url = "http://192.168.1.95:3000/authenticate";
-    const data = {token: token};
+const authenticate = async (token) => {
     
     try{
-        const response = await axios.post(url, data)
-        console.log("response success:", response.status === 200)
-        return {success: response.status === 200}
-    }catch(err){return {success: false}}
+        // Make a GET request to the protected route
+        const response = await fetch(URL + 'authenticate', {
+            method: 'GET',
+            headers: {
+                'Authorization': token
+            }
+        });
+        //console.log('Protected route response:', data);
+        console.log(response.status)
+    
+        const data = await response.json()
+        console.log("data: ", data)    
+        const userId = data.user
+        console.log("userId: ", userId)    
+        return data 
+    }catch{error => console.error('Access to protected route failed:', error)};
+    
+    return;
 }
 
 
