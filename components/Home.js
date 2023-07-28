@@ -78,8 +78,8 @@ function Home({navigation}) {
         borderWidth: 2,
         borderTopWidth: 2,
         borderColor: "#56b643",
-        borderTopColor: "#56b643",
-        position: "absolute"
+        borderTopColor: "#56b643"
+        //,position: "absolute"
       },
       tabBarActiveTintColor: '#56b643',
     }}>
@@ -106,7 +106,7 @@ function Home({navigation}) {
 
 
 
-      <Tab.Screen name="FSAC" component={Fsacs}
+      <Tab.Screen name="FSAC" component={"does not matter"} 
         listeners={{tabPress: e => e.preventDefault()}}
         options={{
           headerShown: false,
@@ -139,7 +139,8 @@ function Home({navigation}) {
 }
 
 const FsacButton = (props) =>
-    <View style={{borderRadius: 50, borderColor: "#56b643", borderWidth: 2, top: "-14%", backgroundColor: "#091212", width: 100, height: 100}}>
+    <View style={{borderRadius: 25, borderColor: "#56b643", borderWidth: 2, top: "-14%", backgroundColor: "#091212", width: 50, height: 50}}>
+    {/*<View style={{borderRadius: 50, borderColor: "#56b643", borderWidth: 2, top: "-14%", backgroundColor: "#091212", width: 100, height: 100}}>*/}
         <TouchableOpacity 
         style={{padding: 10, flex: 1, flexDirection: "column",  justifyContent: "center", alignItems: "center", padding: "6%", borderRadius: 100, borderWidth: 2, backgroundColor: "#56b643"}}
         onPress={()=> {props.setFsacoso(!props.isFsacoso)}}>    
