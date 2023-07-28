@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const axios = require('axios');
-const URL = "http://192.168.1.254:3000/"
+import {API_URL} from '../constants'
 
 const myPost = async (endpoint = null , data = null) => {
     try{
-        const response = await axios.post(URL + endpoint, data)
+        const response = await axios.post(API_URL + endpoint, data)
         return {success: response.status === 200, data: response.data, }
     }catch(err){
         console.log(err.response.data.message)

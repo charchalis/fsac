@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {API_URL} from '../constants'
 
 
 const postCreateAccount = async (userImage, username, password, firstName, lastName) => {
@@ -32,7 +33,7 @@ const postCreateAccount = async (userImage, username, password, firstName, lastN
         body: data
     };
 
-    const test = await fetch("http://192.168.1.254:3000/" + "createAccount", config)
+    const test = await fetch(API_URL + "createAccount", config)
     
     console.log("test")
     console.log(test)

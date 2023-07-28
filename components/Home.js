@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import { faEye, faPerson, faHouse, faGear } from "@fortawesome/free-solid-svg-icons";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import RNBootSplash from "react-native-bootsplash";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import socket from '../logic/socket';
 
 import AnimatedRingExample from './AnimatedRingExample'
 import Settings from './Settings'
@@ -13,9 +13,22 @@ import Friends from './Friends'
 import Fsacs from './Fsacs'
 import Events from './Events'
 
- 
+import io from 'socket.io-client';
+import {API_URL} from '../constants'
 
 
+
+const activateSocket = (socket, token) =>{
+    
+  socket.on("papers please", async () => {
+
+    console.log("papers")
+  
+    console.log("token: ", token)
+    socket.emit("authenticate client socket", token)
+      
+  })
+}
 
 
 
@@ -28,6 +41,25 @@ function Home({navigation}) {
 
   useEffect(() => {
     RNBootSplash.hide({fade: true});
+    
+    
+    const socket = io(API_URL)
+    
+    socket.on("untrusty socket", () => {
+      Alert.alert("JWT token not valid", "you cheeky little bugger. Back to the login page you go", [{
+          text: "I'm sorry I tried to hack you, daddy ;c",
+          onPress: () => navigation.navigate('Login')
+      }])
+
+    })
+
+    const getToken = async () => await AsyncStorage.getItem('JWT_TOKEN');
+    getToken().then((token) => activateSocket(socket, token))
+
+    
+    
+    
+    
   }, []);
 
 
