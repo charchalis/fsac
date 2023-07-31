@@ -1,21 +1,37 @@
-import {View, Text, StyleSheet} from 'react-native'
+import {View, Text, StyleSheet, ScrollView} from 'react-native'
+import {useEffect} from 'react';
 
 const Friends = () => {
+
+  useEffect(() => {
+    
+    
+
+  },[])
+
     return (
         <View style={styles.window}>
-          <Text style={styles.friendContainer}>friends Screen</Text>
-          <Text style={styles.friendContainer}>friends Screen</Text>
-          <Text style={styles.friendContainer}>friends Screen</Text>
-          <Text style={styles.friendContainer}>friends Screen</Text>
-          <Text style={styles.friendContainer}>friends Screen</Text>
-          <Text style={styles.friendContainer}>friends Screen</Text>
-          <Text style={styles.friendContainer}>friends Screen</Text>
-          <Text style={styles.friendContainer}>friends Screen</Text>
-          <Text style={styles.friendContainer}>friends Screen</Text>
-          <Text style={styles.friendContainer}>friends Screen</Text>
-
-          <View class="addFriendButton" style={{justifyContent: 'center', alignItems: 'center' , backgroundColor: "#f80", color: "#fff"}}>
-            <Text >friends Screen</Text>
+          <ScrollView >
+            <View style={styles.friendContainer}>
+              <View>
+                <Text>pic goes here</Text>
+              </View>
+              <Text>dummy friend</Text>
+              <View class="friendFsacButton" style={styles.button}>
+                <Text>fsac</Text>
+              </View>
+            </View>
+            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+          </ScrollView>
+          <View class="addFriendButton" style={styles.button}>
+            <Text >Add friend</Text>
           </View>
         </View>
       );
@@ -24,14 +40,29 @@ const Friends = () => {
 const styles = StyleSheet.create({
   window: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'stretch',
     backgroundColor: '#091212',
     color: '#56b643'
   },
   friendContainer:{
     flex: 1,
-    color: '#fff'
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    padding: 30,
+    borderColor: "#56b643",
+    borderBottomWidth: 1
+
+  },
+  button:{
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: "#f80",
+    color: "#fff",
+    padding: 10,
+    margin: 5,
+    borderRadius: 10,
   }
 })
 

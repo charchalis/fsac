@@ -14,11 +14,13 @@ import Fsacs from './Fsacs'
 import Events from './Events'
 
 import io from 'socket.io-client';
-import {API_URL} from '../constants'
+import {API_URL} from '../constants';
+
+import socket from '../logic/socket';
 
 
 
-const activateSocket = (socket, token) =>{
+const activateSocket = (token) =>{
     
   socket.on("papers please", async () => {
 
@@ -42,8 +44,8 @@ function Home({navigation}) {
   useEffect(() => {
     RNBootSplash.hide({fade: true});
     
+    console.log(socket)
     
-    const socket = io(API_URL)
     
     socket.on("untrusty socket", () => {
       Alert.alert("JWT token not valid", "you cheeky little bugger. Back to the login page you go", [{
@@ -54,7 +56,7 @@ function Home({navigation}) {
     })
 
     const getToken = async () => await AsyncStorage.getItem('JWT_TOKEN');
-    getToken().then((token) => activateSocket(socket, token))
+    getToken().then((token) => activateSocket(token))
 
     
     
@@ -139,8 +141,11 @@ function Home({navigation}) {
 }
 
 const FsacButton = (props) =>
-    <View style={{borderRadius: 25, borderColor: "#56b643", borderWidth: 2, top: "-14%", backgroundColor: "#091212", width: 50, height: 50}}>
-    {/*<View style={{borderRadius: 50, borderColor: "#56b643", borderWidth: 2, top: "-14%", backgroundColor: "#091212", width: 100, height: 100}}>*/}
+      <View style={{borderRadius: 30, borderColor: "#56b643", borderWidth: 2, top: "2%", backgroundColor: "#091212", width: 60, height: 60}}>
+    {/*
+      <View style={{borderRadius: 25, borderColor: "#56b643", borderWidth: 2, top: "-3%", backgroundColor: "#091212", width: 50, height: 50}}>
+      <View style={{borderRadius: 50, borderColor: "#56b643", borderWidth: 2, top: "-14%", backgroundColor: "#091212", width: 100, height: 100}}>
+    */}
         <TouchableOpacity 
         style={{padding: 10, flex: 1, flexDirection: "column",  justifyContent: "center", alignItems: "center", padding: "6%", borderRadius: 100, borderWidth: 2, backgroundColor: "#56b643"}}
         onPress={()=> {props.setFsacoso(!props.isFsacoso)}}>    
@@ -148,7 +153,7 @@ const FsacButton = (props) =>
             props.isFsacoso ? 
             <AnimatedRingExample/>
             :
-            <Text style={{fontSize: 25, color:"#091212", fontWeight: "600", fontStyle: "italic"}}>fsac</Text>     
+            <Text style={{fontSize: 20, color:"#091212", fontWeight: "600", fontStyle: "italic"}}>fsac</Text>     
           }       
         </TouchableOpacity> 
     </View> 
