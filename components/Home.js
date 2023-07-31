@@ -5,6 +5,8 @@ import { faEye, faPerson, faHouse, faGear } from "@fortawesome/free-solid-svg-ic
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import RNBootSplash from "react-native-bootsplash";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector, useDispatch } from 'react-redux';
+import { socketReducer } from './reducers/socketReducer'; // Import your action
 
 
 import AnimatedRingExample from './AnimatedRingExample'
@@ -12,11 +14,7 @@ import Settings from './Settings'
 import Friends from './Friends'
 import Fsacs from './Fsacs'
 import Events from './Events'
-
-import io from 'socket.io-client';
-import {API_URL} from '../constants';
-
-import socket from '../logic/socket';
+import socket from '../logic/socket'
 
 
 
@@ -40,11 +38,12 @@ const Tab = createBottomTabNavigator();
 function Home({navigation}) {
 
   const [isFsacoso, setFsacoso] = useState(false);
+  
 
   useEffect(() => {
     RNBootSplash.hide({fade: true});
     
-    console.log(socket)
+
     
     
     socket.on("untrusty socket", () => {

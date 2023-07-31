@@ -1,26 +1,45 @@
-import {View, Text, StyleSheet, ScrollView} from 'react-native'
-import {useEffect} from 'react';
+import {View, Text, StyleSheet, ScrollView, Image} from 'react-native'
+import {useEffect, useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import socket from '../logic/socket'
+
+import Friend from './Friend';
+
+
+const gimmeFriends = async () => {
+  
+  const token = await AsyncStorage.getItem('JWT_TOKEN');
+  socket.emit("gimme friends", token)
+}
+
+
 
 const Friends = () => {
 
+  const [friendList, setFriendList] = useState([]);
+
   useEffect(() => {
     
+    socket.on("take friend list", (friendList) => {
+      console.log("got friend list")
+      setFriendList(friendList)
+    })
     
+    gimmeFriends();
 
   },[])
+  
+  useEffect(() => {
+    
+    console.log("updated friend list")
+    
+
+  }, [friendList])
 
     return (
         <View style={styles.window}>
           <ScrollView >
-            <View style={styles.friendContainer}>
-              <View>
-                <Text>pic goes here</Text>
-              </View>
-              <Text>dummy friend</Text>
-              <View class="friendFsacButton" style={styles.button}>
-                <Text>fsac</Text>
-              </View>
-            </View>
+            { friendList.map((friend) => (<Friend key={friend.id} data={friend}/>)) }
             <View style={styles.friendContainer}><Text>dummy friend</Text></View>
             <View style={styles.friendContainer}><Text>dummy friend</Text></View>
             <View style={styles.friendContainer}><Text>dummy friend</Text></View>
