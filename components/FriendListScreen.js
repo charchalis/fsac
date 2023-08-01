@@ -49,7 +49,7 @@ const FriendListScreen = ({navigation}) => {
           <View style={styles.friendContainer}><Text>dummy friend</Text></View>
         </ScrollView>
         <TouchableOpacity class="addFriendButton" style={styles.button} onPress={() => navigation.navigate('AddFriendScreen')}>
-          <Text> Add friend</Text>
+          <Text>Add friend</Text>
         </TouchableOpacity>
       </View>
       );
