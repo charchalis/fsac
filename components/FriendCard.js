@@ -1,10 +1,10 @@
-import {View, Text, StyleSheet, Image} from 'react-native'
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native'
 import {useEffect, useState} from 'react';
 
 
 const FriendCard = (props) => {
   
-  const { data } = props;
+  const { data, buttonString, buttonFunction } = props;
   
   const [image, setImage] = useState(`data:image/jpeg;base64,${data.image}`);
   
@@ -23,9 +23,10 @@ const FriendCard = (props) => {
           <Text style={{fontSize: 13}}>{data.firstName + " " + data.lastName}</Text>
         </View>
       </View>
-      <View class="friendFsacButton" style={styles.button}>
-        <Text>fsac</Text>
-      </View>
+      <TouchableOpacity class="friendFsacButton" style={styles.button}
+      onPress={buttonFunction}>
+        <Text>{buttonString}</Text>
+      </TouchableOpacity>
     </View>
     );
 }

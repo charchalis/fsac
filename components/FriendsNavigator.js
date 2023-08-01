@@ -17,7 +17,7 @@ const FriendsNavigator = () => {
       <NavigationContainer independent={true}>
         <Stack.Navigator>
           <Stack.Screen name="FriendListScreen" component={FriendListScreen} options={{headerShown: false }}/>
-          <Stack.Screen name="AddFriendScreen" component={AddFriendScreen} options={{title: "Add a friend", headerStyle: {backgroundColor: '#091212' }, headerTintColor: '#fff'}} />
+          <Stack.Screen name="AddFriendScreen" component={AddFriendScreen} options={{title: "Add a friend", headerStyle: {backgroundColor: '#091212'}, headerTintColor: '#fff'}} />
         </Stack.Navigator>  
       </NavigationContainer>
       </View>

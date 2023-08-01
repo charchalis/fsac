@@ -17,11 +17,17 @@ const FriendListScreen = ({navigation}) => {
 
   const [friendList, setFriendList] = useState([]);
 
+
   useEffect(() => {
     
     socket.on("take friend list", (friendList) => {
       console.log("got friend list")
       setFriendList(friendList)
+    })
+    
+    socket.on("new friend", (friendId) => {
+      console.log("got new friend omg")
+      gimmeFriends();
     })
     
     gimmeFriends();
@@ -38,7 +44,11 @@ const FriendListScreen = ({navigation}) => {
     return (
       <View style={styles.window}>
         <ScrollView >
-          { friendList.map((friend) => (<FriendCard key={friend.id} data={friend}/>)) }
+          { friendList.map((friend) => (
+          <FriendCard key={friend.id}
+            data={friend}
+            buttonString={'fsac'}
+            buttonFunction={() => {console.log("sent fsac")}}/>)) }
           <View style={styles.friendContainer}><Text>dummy friend</Text></View>
           <View style={styles.friendContainer}><Text>dummy friend</Text></View>
           <View style={styles.friendContainer}><Text>dummy friend</Text></View>
@@ -48,7 +58,8 @@ const FriendListScreen = ({navigation}) => {
           <View style={styles.friendContainer}><Text>dummy friend</Text></View>
           <View style={styles.friendContainer}><Text>dummy friend</Text></View>
         </ScrollView>
-        <TouchableOpacity class="addFriendButton" style={styles.button} onPress={() => navigation.navigate('AddFriendScreen')}>
+        <TouchableOpacity class="addFriendButton" style={styles.button}
+          onPress={() => navigation.navigate('AddFriendScreen')}>
           <Text>Add friend</Text>
         </TouchableOpacity>
       </View>
