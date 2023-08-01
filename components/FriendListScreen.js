@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import socket from '../logic/socket'
 
-import Friend from './Friend';
+import FriendCard from './FriendCard';
 
 
 const gimmeFriends = async () => {
@@ -38,7 +38,7 @@ const FriendListScreen = ({navigation}) => {
     return (
       <View style={styles.window}>
         <ScrollView >
-          { friendList.map((friend) => (<Friend key={friend.id} data={friend}/>)) }
+          { friendList.map((friend) => (<FriendCard key={friend.id} data={friend}/>)) }
           <View style={styles.friendContainer}><Text>dummy friend</Text></View>
           <View style={styles.friendContainer}><Text>dummy friend</Text></View>
           <View style={styles.friendContainer}><Text>dummy friend</Text></View>

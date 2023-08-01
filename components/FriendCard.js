@@ -2,7 +2,7 @@ import {View, Text, StyleSheet, Image} from 'react-native'
 import {useEffect, useState} from 'react';
 
 
-const Friend = (props) => {
+const FriendCard = (props) => {
   
   const { data } = props;
   
@@ -53,4 +53,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Friend;
+export default FriendCard;
