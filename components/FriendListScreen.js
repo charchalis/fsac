@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, ScrollView, Image} from 'react-native'
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native'
 import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import socket from '../logic/socket'
@@ -13,8 +13,7 @@ const gimmeFriends = async () => {
 }
 
 
-
-const Friends = () => {
+const FriendListScreen = ({navigation}) => {
 
   const [friendList, setFriendList] = useState([]);
 
@@ -37,22 +36,22 @@ const Friends = () => {
   }, [friendList])
 
     return (
-        <View style={styles.window}>
-          <ScrollView >
-            { friendList.map((friend) => (<Friend key={friend.id} data={friend}/>)) }
-            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
-            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
-            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
-            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
-            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
-            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
-            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
-            <View style={styles.friendContainer}><Text>dummy friend</Text></View>
-          </ScrollView>
-          <View class="addFriendButton" style={styles.button}>
-            <Text >Add friend</Text>
-          </View>
-        </View>
+      <View style={styles.window}>
+        <ScrollView >
+          { friendList.map((friend) => (<Friend key={friend.id} data={friend}/>)) }
+          <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+          <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+          <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+          <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+          <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+          <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+          <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+          <View style={styles.friendContainer}><Text>dummy friend</Text></View>
+        </ScrollView>
+        <TouchableOpacity class="addFriendButton" style={styles.button} onPress={() => navigation.navigate('AddFriendScreen')}>
+          <Text> Add friend</Text>
+        </TouchableOpacity>
+      </View>
       );
 }
 
@@ -85,4 +84,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Friends;
+export default FriendListScreen;

@@ -5,11 +5,9 @@ import {useEffect, useState} from 'react';
 const Friend = (props) => {
   
   const { data } = props;
-  console.log(data)
   
   const [image, setImage] = useState(`data:image/jpeg;base64,${data.image}`);
   
-  console.log(image)
 
   useEffect(() => {
 
@@ -18,10 +16,13 @@ const Friend = (props) => {
 
   return (
     <View style={styles.friendContainer}>
-      <View>
-        <Image source={{ uri: image }} style={{ width: 200, height: 200 , backgroundColor: "#fff"}} />
+      <View style={{flex:1, flexDirection: 'row' }}>
+        <Image source={{ uri: image }} style={{ width: 60, height: 60 , backgroundColor: "#fff", borderRadius: 30}} />
+        <View style={{alignSelf: 'center', marginLeft: 10}}>
+          <Text style={{fontSize: 20}}>{data.username}</Text>
+          <Text style={{fontSize: 13}}>{data.firstName + " " + data.lastName}</Text>
+        </View>
       </View>
-      <Text>dummy friend</Text>
       <View class="friendFsacButton" style={styles.button}>
         <Text>fsac</Text>
       </View>

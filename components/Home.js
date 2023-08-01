@@ -11,7 +11,7 @@ import { socketReducer } from './reducers/socketReducer'; // Import your action
 
 import AnimatedRingExample from './AnimatedRingExample'
 import Settings from './Settings'
-import Friends from './Friends'
+import FriendsNavigator from './FriendsNavigator'
 import Fsacs from './Fsacs'
 import Events from './Events'
 import socket from '../logic/socket'
@@ -116,7 +116,7 @@ function Home({navigation}) {
 
 
 
-      <Tab.Screen name="friends" component={Friends}
+      <Tab.Screen name="friends" component={FriendsNavigator}
       options={{
         headerShown: false,
         tabBarIcon: ({focused, color, size}) =>
