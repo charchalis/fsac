@@ -2,6 +2,11 @@ import {View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity, 
 import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import socket from '../logic/socket'
+import { useSelector, useDispatch } from 'react-redux';
+
+
+import { addFriend } from '../reducers/friendListReducer';
+
 
 import FriendCard from './FriendCard';
 
@@ -15,6 +20,8 @@ const AddFriendScreen = ({navigation}) => {
     const [possibleFriends, setPossibleFriends] = useState([]);
     const [noFriends, setNoFriends] = useState(false);
 
+    const dispatch = useDispatch()
+
   useEffect(() => {
       
     socket.on('take possible friends', (friends) => {
@@ -22,8 +29,10 @@ const AddFriendScreen = ({navigation}) => {
         setPossibleFriends(friends)
     })
 
-    socket.on("new friend", (friendId) => {
+    socket.on("new friend", (friend) => {
         console.log("new friend omg")
+
+        const friendId = friend.id
 
         const showToast = () => {
             ToastAndroid.showWithGravity(
@@ -36,6 +45,8 @@ const AddFriendScreen = ({navigation}) => {
           showToast()
         
         setPossibleFriends((prevPossibleFriends) => {return prevPossibleFriends.filter((friend => friend.id != friendId))})
+
+        dispatch(addFriend(friend))
         
     })
 
@@ -45,8 +56,6 @@ const AddFriendScreen = ({navigation}) => {
   useEffect(() => {
       
     setIsLoading(false)
-      
-    console.log("no friends")
       
     if(!possibleFriends.length) setNoFriends(true)
       
@@ -74,7 +83,7 @@ const AddFriendScreen = ({navigation}) => {
                 { possibleFriends.map((friend) => (<FriendCard key={friend.id}
                 data={friend}
                 buttonString={'add friend'}
-                buttonFunction={async () => {const token = await AsyncStorage.getItem('JWT_TOKEN'); socket.emit('add friend', {token, friendId: friend.id})}}/>)) }
+                buttonFunction={async () => {const token = await AsyncStorage.getItem('JWT_TOKEN'); socket.emit('add friend', {token, friend: friend})}}/>)) }
                 
             </ScrollView>
         )}

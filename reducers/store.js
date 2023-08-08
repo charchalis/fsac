@@ -1,9 +1,11 @@
 // store.js
 import { configureStore } from '@reduxjs/toolkit';
-import rootReducer from './reducers'; // Import your root reducer
+import friendListReducer from './friendListReducer';
 
 const store = configureStore({
-  reducer: rootReducer,
+  reducer: {
+    friendList: friendListReducer,
+  },
 });
 
 export default store;
