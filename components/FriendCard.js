@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react';
 
 const showTime = (unixTime) => {
   const currentDate = Date.now()
+  console.log("current date: ", unixTime - currentDate)
   const countdown = new Date(unixTime - currentDate);
 
   const hours = countdown.getHours();
