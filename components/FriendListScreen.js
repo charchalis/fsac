@@ -14,23 +14,32 @@ const gimmeFriends = async () => {
   socket.emit("gimme friends", token)
 }
 
-const manageButtonFunction = async () => {
-  availableFsac = friend.timespan ? false : true
-  if(availableFsac){
-    console.log(availableFsac)
-    console.log("sent fsac");
+const manageButtonFunction = async (friend) => {
+
+  console.log("MANAGING BUTTON FUNCTION")
+  
+  if(!friend.timespan){
+
+    console.log("sending fsac");
     const token = await AsyncStorage.getItem('JWT_TOKEN');
     socket.emit('fsac?', {token, friendId: friend.id})
-  }else{
-    const showToast = () => {
-      ToastAndroid.showWithGravity(
-        'You can send another fsac after the countdown',
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER,
-      );
-    };
 
-    showToast()
+  }else{
+    
+    if(friend.timespan != 1){
+
+      const showToast = () => {
+        ToastAndroid.showWithGravity(
+          'You can send another fsac after the countdown',
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+        );
+      };
+      showToast()
+
+    }else {
+      console.log("OMGOMGOMGOMGOMGOMGOMGOMG ", friend.username, " wants to fsac with u <3")
+    }
   }
 }
 
@@ -46,10 +55,6 @@ const FriendListScreen = ({navigation}) => {
     socket.on("take friend list", (friends) => {
       console.log("got friend list")
       dispatch(setFriendList(friends))
-    })
-    
-    socket.on("new friend", (friendId) => {
-      console.log("got new friend omg")
     })
 
     socket.on("fsac invite successful", ({friendId, timespan}) => {
@@ -88,9 +93,15 @@ const FriendListScreen = ({navigation}) => {
           { friendList.map((friend) => (
           <FriendCard key={friend.id}
             data={friend}
-            buttonString={friend.timespan && friend.timespan != 1 ? friend.timespan : 'fsac'}
-            buttonFunction={ manageButtonFunction }
-          />))}
+            buttonString={friend.timespan && friend.timespan != 1 ? friend.timespan : friend.timespan === 1 ? 'chat' : 'fsac'}
+            buttonFunction={ () => manageButtonFunction(friend) }
+          />))} 
+
+          { friendList.map((friend) => {
+            const {image, ...friendo} = friend;
+            console.log(friendo)
+          })} 
+
         </ScrollView>
         <TouchableOpacity class="addFriendButton" style={styles.button}
           onPress={() => navigation.navigate('AddFriendScreen')}>

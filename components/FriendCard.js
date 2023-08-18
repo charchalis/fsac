@@ -29,6 +29,10 @@ const FriendCard = (props) => {
 
   useEffect(() => {
 
+    const {image, ...friendo} = data;
+    console.log("HEREEEEEEEEEEE")
+    console.log(friendo)
+
     console.log(data.username, " timespan:", data.timespan)
     if(data.timespan && data.timespan != 1){
       setButtonColor("#222");
