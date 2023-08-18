@@ -14,6 +14,26 @@ const gimmeFriends = async () => {
   socket.emit("gimme friends", token)
 }
 
+const manageButtonFunction = async () => {
+  availableFsac = friend.timespan ? false : true
+  if(availableFsac){
+    console.log(availableFsac)
+    console.log("sent fsac");
+    const token = await AsyncStorage.getItem('JWT_TOKEN');
+    socket.emit('fsac?', {token, friendId: friend.id})
+  }else{
+    const showToast = () => {
+      ToastAndroid.showWithGravity(
+        'You can send another fsac after the countdown',
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+      );
+    };
+
+    showToast()
+  }
+}
+
 
 const FriendListScreen = ({navigation}) => {
 
@@ -68,27 +88,8 @@ const FriendListScreen = ({navigation}) => {
           { friendList.map((friend) => (
           <FriendCard key={friend.id}
             data={friend}
-            buttonString={friend.timespan ? friend.timespan : 'fsac'}
-            buttonFunction={ async () => {
-              availableFsac = friend.timespan ? false : true
-              if(availableFsac){
-                console.log(availableFsac)
-                console.log("sent fsac");
-                const token = await AsyncStorage.getItem('JWT_TOKEN');
-                socket.emit('fsac?', {token, friendId: friend.id})
-              }else{
-                const showToast = () => {
-                  ToastAndroid.showWithGravity(
-                    'You can send another fsac after the countdown',
-                    ToastAndroid.SHORT,
-                    ToastAndroid.CENTER,
-                  );
-                };
-          
-                showToast()
-              }
-              
-            }}
+            buttonString={friend.timespan && friend.timespan != 1 ? friend.timespan : 'fsac'}
+            buttonFunction={ manageButtonFunction }
           />))}
         </ScrollView>
         <TouchableOpacity class="addFriendButton" style={styles.button}

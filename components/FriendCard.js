@@ -1,16 +1,18 @@
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native'
 import {useEffect, useState} from 'react';
 
-const showTime = (unixTime) => {
+const showTime = (expireDate) => {
   const currentDate = Date.now()
-  console.log("current date: ", unixTime - currentDate)
-  const countdown = new Date(unixTime - currentDate);
+  const countdown = expireDate - currentDate;
 
-  const hours = countdown.getHours();
-  const minutes = countdown.getMinutes();
-  const seconds = countdown.getSeconds();
+  let seconds = Math.floor(countdown / 1000);
+  let minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
 
-  return (hours ? (hours < 10 ? '0' : '') + hours + ':' : '') + (hours || minutes ? (minutes < 10 ? '0' : '') + minutes + ':' : '') + (seconds < 10 ? '0' : '') + seconds 
+  seconds = seconds % 60
+  minutes = minutes % 60
+
+  return (hours ? (hours < 10 ? '0' : '') + hours + ':' : '') + (hours || minutes ? (minutes < 10 ? '0' : '') + minutes + ':' : '') + (seconds < 10 ? '0' : '') + seconds
 }
 
 
@@ -27,10 +29,8 @@ const FriendCard = (props) => {
 
   useEffect(() => {
 
-    console.log("timespan:", data.timespan)
-    console.log("timespan:", data.timespan ? "yes" : "no")
-
-    if(data.timespan){
+    console.log(data.username, " timespan:", data.timespan)
+    if(data.timespan && data.timespan != 1){
       setButtonColor("#222");
     }else{
       setButtonColor("#f80");
@@ -40,8 +40,7 @@ const FriendCard = (props) => {
 
   useEffect(() => {
 
-    if(data.timespan){
-      console.log("popo")
+    if(data.timespan && data.timespan != 1){
       setButtonStr(showTime(data.timespan))
     }
 
@@ -49,7 +48,7 @@ const FriendCard = (props) => {
 
   useEffect(() => {
 
-    if(data.timespan){
+    if(data.timespan && data.timespan != 1){
       
       function sleep(milliseconds) {
         return new Promise(resolve => setTimeout(resolve, milliseconds));
