@@ -1,6 +1,7 @@
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native'
 import {useEffect, useState} from 'react';
 
+
 const showTime = (expireDate) => {
   const currentDate = Date.now()
   const countdown = expireDate - currentDate;
@@ -18,9 +19,9 @@ const showTime = (expireDate) => {
 
 const FriendCard = (props) => {
   
-  const { data, buttonString, buttonFunction } = props;
+  const { friend, buttonString, buttonFunction } = props;
   
-  const [image, setImage] = useState(`data:image/jpeg;base64,${data.image}`);
+  const [image, setImage] = useState(`data:image/jpeg;base64,${friend.image}`);
   
   const [buttonColor, setButtonColor] = useState("#f80");
 
@@ -29,30 +30,28 @@ const FriendCard = (props) => {
 
   useEffect(() => {
 
-    const {image, ...friendo} = data;
-    console.log("HEREEEEEEEEEEE")
-    console.log(friendo)
+  },[friend])
 
-    console.log(data.username, " timespan:", data.timespan)
-    if(data.timespan && data.timespan != 1){
+  useEffect(() => {
+
+    console.log(friend.username, " timespan:", friend.timespan)
+
+    if(friend.timespan && friend.timespan != 1){
+
       setButtonColor("#222");
+      setButtonStr(showTime(friend.timespan))
+
     }else{
+
       setButtonColor("#f80");
+
     }
 
-  },[data])
+  },[friend.timespan])
 
   useEffect(() => {
 
-    if(data.timespan && data.timespan != 1){
-      setButtonStr(showTime(data.timespan))
-    }
-
-  },[data.timespan])
-
-  useEffect(() => {
-
-    if(data.timespan && data.timespan != 1){
+    if(friend.timespan && friend.timespan != 1){
       
       function sleep(milliseconds) {
         return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -60,7 +59,7 @@ const FriendCard = (props) => {
 
       async function updateButtonString() {
         await sleep(1000);
-        setButtonStr(showTime(data.timespan))
+        setButtonStr(showTime(friend.timespan))
       }
       
       updateButtonString()
@@ -69,22 +68,56 @@ const FriendCard = (props) => {
 
   },[buttonStr])
 
-  return (
-    <View style={styles.friendContainer}>
-      <View style={{flex:1, flexDirection: 'row' }}>
-        <Image source={{ uri: image }} style={{ width: 60, height: 60 , backgroundColor: "#fff", borderRadius: 30}} />
-        <View style={{alignSelf: 'center', marginLeft: 10}}>
-          <Text style={{fontSize: 20}}>{data.username}</Text>
-          <Text style={{fontSize: 13}}>{data.firstName + " " + data.lastName}</Text>
+  
+  const regularCard = () => {
+    return (
+      <View style={styles.friendContainer}>
+        <View style={{flex:1, flexDirection: 'row'}}>
+          <Image source={{ uri: image }} style={{ width: 60, height: 60 , backgroundColor: "#fff", borderRadius: 30, margin: 30, marginRight: 15}} />
+          <View style={{alignSelf: 'center'}}>
+            <Text style={{fontSize: 20}}>{friend.username}</Text>
+            <Text style={{fontSize: 13}}>{friend.firstName + " " + friend.lastName}</Text>
+          </View>
         </View>
+  
+        <TouchableOpacity class="friendFsacButton" style={[styles.button, {backgroundColor: buttonColor}]}
+          onPress={buttonFunction}>
+          <Text>{buttonStr}</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity class="friendFsacButton" style={[styles.button, {backgroundColor: buttonColor}]}
-      onPress={buttonFunction}>
-        <Text>{buttonStr}</Text>
+    )
+  }
+  
+  const fsacCard = () => {
+    return (
+      <TouchableOpacity style={[styles.friendContainer, {paddingRight: 0}]}>
+        <View style={{flex:1, flexDirection: 'row' }}>
+
+          <Image source={{ uri: image }} style={{ width: 60, height: 60 , backgroundColor: "#fff", borderRadius: 30, margin: 30, marginRight: 15}} />
+
+          <View style={{alignSelf: 'center', justifyContent: 'space-around'}}>
+
+            <View style={{flexDirection: 'row', alignSelf: 'center', alignItems: 'center'}}>
+              <Text style={{fontSize: 20}}>{friend.username}</Text>
+              <Text style={{fontSize: 13, marginLeft: 10, alignSelf: 'center'}}>{friend.firstName + " " + friend.lastName}</Text>
+            </View>
+
+            <View style={{ }}>
+              <Text style={{fontSize: 13, color: '#555', marginTop: 10}}>mensagem e o crl</Text>
+            </View>
+
+          </View>
+            
+
+        </View>
       </TouchableOpacity>
-    </View>
-    );
+    )
+  }
+
+  return friend.timespan != 1 ? regularCard() : fsacCard()
 }
+
+
 
 const styles = StyleSheet.create({
   friendContainer:{
@@ -93,10 +126,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     alignSelf: 'stretch',
-    padding: 30,
+    paddingRight: 30,
     borderColor: "#56b643",
     borderBottomWidth: 1
-
+  },
+  friendContainerFsacing:{
+    backgroundColor: '#f00'
   },
   button:{
     justifyContent: 'center',

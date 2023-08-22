@@ -92,8 +92,8 @@ const FriendListScreen = ({navigation}) => {
         <ScrollView >
           { friendList.map((friend) => (
           <FriendCard key={friend.id}
-            data={friend}
-            buttonString={friend.timespan && friend.timespan != 1 ? friend.timespan : friend.timespan === 1 ? 'chat' : 'fsac'}
+            friend={friend}
+            buttonString={friend.timespan && friend.timespan != 1 ? friend.timespan : 'fsac'}
             buttonFunction={ () => manageButtonFunction(friend) }
           />))} 
 
