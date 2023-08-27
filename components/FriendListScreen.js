@@ -95,6 +95,7 @@ const FriendListScreen = ({navigation}) => {
             friend={friend}
             buttonString={friend.timespan && friend.timespan != 1 ? friend.timespan : 'fsac'}
             buttonFunction={ () => manageButtonFunction(friend) }
+            navigation = { navigation }
           />))} 
 
           { friendList.map((friend) => {

@@ -81,7 +81,7 @@ const AddFriendScreen = ({navigation}) => {
         ) : (
             <ScrollView>
                 { possibleFriends.map((friend) => (<FriendCard key={friend.id}
-                data={friend}
+                friend={friend}
                 buttonString={'add friend'}
                 buttonFunction={async () => {const token = await AsyncStorage.getItem('JWT_TOKEN'); socket.emit('add friend', {token, friend: friend})}}/>)) }
                 

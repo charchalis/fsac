@@ -7,17 +7,19 @@
  */
 
 import React, { useEffect } from 'react';
-import { StatusBar, View } from 'react-native';
-import { Provider } from 'react-redux';
+import { StatusBar } from 'react-native';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import store from './reducers/store';
 import { NavigationContainer, TabActions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { HeaderBackButton } from '@react-navigation/stack';
 
 
 import CreateAccount from './components/CreateAccount'
 import Login from './components/Login'
 import Home from './components/Home'
-import ChatBox from './components/ChatBox'
+import ChatScreen from './components/ChatScreen'
+import { setOnChatroom } from './reducers/navigatorOnChatroom';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +30,11 @@ const App = () => {
   }, []);
   
 
+  const method = () => {
+    const dispatch = useDispatch();
+    dispatch(setOnChatroom(false));
+  }
+
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -35,7 +42,7 @@ const App = () => {
           <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
           <Stack.Screen name="CreateAccount" component={CreateAccount} options={{headerStyle: { backgroundColor: "#888"}, headerTintColor: '#000'}}/>
           <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
-          <Stack.Screen name="Chatbox" component={ChatBox} />
+          <Stack.Screen name="ChatScreen" component={ChatScreen} options={{headerStyle: {backgroundColor: '#091212'}, headerTintColor: '#fff'}}/>
         </Stack.Navigator>  
       </NavigationContainer>
     </Provider>

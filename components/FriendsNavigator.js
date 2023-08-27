@@ -4,13 +4,14 @@ import { createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import FriendListScreen from './FriendListScreen';
 import AddFriendScreen from './AddFriendScreen';
+import ChatScreen from './ChatScreen';
 
 
 const Stack = createNativeStackNavigator();
 
 
 
-const FriendsNavigator = () => {
+const FriendsNavigator = (props) => {
 
     return (
       <View style={{flex: 1,backgroundColor: "#091212"}}>

@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import { Text, View, TouchableOpacity, Alert } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import { faEye, faPerson, faHouse, faGear } from "@fortawesome/free-solid-svg-icons";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import RNBootSplash from "react-native-bootsplash";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useSelector, useDispatch } from 'react-redux';
-import { socketReducer } from './reducers/socketReducer'; // Import your action
+
 
 
 import AnimatedRingExample from './AnimatedRingExample'
@@ -15,6 +15,7 @@ import FriendsNavigator from './FriendsNavigator'
 import Fsacs from './Fsacs'
 import Events from './Events'
 import socket from '../logic/socket'
+import { setOnChatroom } from '../reducers/navigatorOnChatroom';
 
 
 
@@ -39,12 +40,15 @@ function Home({navigation}) {
 
   const [isFsacoso, setFsacoso] = useState(false);
   
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    RNBootSplash.hide({fade: true});
     
+    console.log("im in home")
+    dispatch(setOnChatroom(false))
 
-    
+    RNBootSplash.hide({fade: true});
+
     
     socket.on("untrusty socket", () => {
       Alert.alert("JWT token not valid", "you cheeky little bugger. Back to the login page you go", [{
@@ -64,12 +68,24 @@ function Home({navigation}) {
   }, []);
 
 
+  const onChatroom = useSelector(state => state.onChatroom.onChatroom)
+  
+  useEffect(() => {
+    if(onChatroom){
+      navigation.navigate('ChatScreen')
+    }
+  }, [onChatroom]);
+   
+
+
   return (
     <View style={{flex: 1, backgroundColor: "#091212"}}>
     <Tab.Navigator
     screenOptions={{
       tabBarStyle: {
         
+        
+
         margin: "2%",
         
         paddingBottom: "5%",
