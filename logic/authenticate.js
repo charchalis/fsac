@@ -16,7 +16,7 @@ const authenticate = async (token) => {
     
         const data = await response.json()
         console.log("data: ", data)    
-        const userId = data.user
+        const userId = data.user.id
         console.log("userId: ", userId)    
         return data 
     }catch{error => console.error('Access to protected route failed:', error)};

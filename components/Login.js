@@ -8,10 +8,16 @@ import CreateAccount from './CreateAccount';
 import authenticate from '../logic/authenticate';
 import login from '../logic/login';
 
+import { useDispatch } from 'react-redux';
+import { setUser } from '../reducers/myUserReducer'
+
+
 const Login = ({navigation}) => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+    const dispatch = useDispatch();
 
     const authentication = async () => {
 
@@ -21,8 +27,11 @@ const Login = ({navigation}) => {
                 console.log('Retrieved token: ', token);
                 const authentication = await authenticate(token)
                 
-                if(authentication.success) navigation.navigate('Home', authentication.user);
-                else RNBootSplash.hide({fade: true});
+                if(authentication.success){
+                    dispatch(setUser(authentication.user))
+                    navigation.navigate('Home');
+
+                }else RNBootSplash.hide({fade: true});
 
 
             } else {

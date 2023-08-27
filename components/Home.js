@@ -15,7 +15,6 @@ import FriendsNavigator from './FriendsNavigator'
 import Fsacs from './Fsacs'
 import Events from './Events'
 import socket from '../logic/socket'
-import { setOnChatroom } from '../reducers/navigatorOnChatroom';
 
 
 
@@ -39,13 +38,8 @@ const Tab = createBottomTabNavigator();
 function Home({navigation}) {
 
   const [isFsacoso, setFsacoso] = useState(false);
-  
-  const dispatch = useDispatch();
 
   useEffect(() => {
-    
-    console.log("im in home")
-    dispatch(setOnChatroom(false))
 
     RNBootSplash.hide({fade: true});
 

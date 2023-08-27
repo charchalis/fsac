@@ -34,7 +34,7 @@ const App = () => {
           <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
           <Stack.Screen name="CreateAccount" component={CreateAccount} options={{headerStyle: { backgroundColor: "#888"}, headerTintColor: '#000'}}/>
           <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
-          <Stack.Screen name="ChatScreen" component={ChatScreen} options={{headerStyle: {backgroundColor: '#091212'}, headerTintColor: '#fff'}}/>
+          <Stack.Screen name="ChatScreen" component={ChatScreen} options={{headerStyle: {backgroundColor: '#555'}, headerTintColor: '#fff'}}/>
         </Stack.Navigator>  
       </NavigationContainer>
     </Provider>

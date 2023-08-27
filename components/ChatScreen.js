@@ -1,14 +1,22 @@
-import {View, Text, TextInput, Image} from 'react-native'
+import {View, Text, TextInput, Image, TouchableOpacity} from 'react-native'
 import {useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { setOnChatroom } from '../reducers/navigatorOnChatroom';
 
+import Message from './Message'
+
 const ChatScreen = ({navigation}) => {
   
+  const myUser = useSelector(state => state.myUser.user)
   const friend = useSelector(state => state.onChatroom.friend)
+
   const dispatch = useDispatch();
+  
+  
 
   useEffect(() => {
+    
+    // add friend image to header
     navigation.setOptions({ 
       headerTitle: (props) =>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -18,16 +26,26 @@ const ChatScreen = ({navigation}) => {
               />
               <Text style={{fontSize: 23}}>{friend.username}</Text>
             </View>
-    }); // add header image
+    }); 
     
     return () => {dispatch(setOnChatroom(false))}
+
   }, []);
 
     return (
         <View style={{ flex: 1, alignItems: 'stretch', justifyContent: 'space-between', backgroundColor: "#091212"}}>
-          <Text style={{color: "#fff", flex: 1 }}>chat Screen</Text>
-          <View style={{backgroundColor: "#555", borderRadius: 25, marginLeft: 10, marginRight: 10}}>
-            <TextInput style={{margin: 5, backgroundColor: "#091212", borderRadius: 25}}/>
+
+          <View style={{flex:1}}>
+            {}
+            <Message />
+            <Message/>
+          </View>
+
+          <View style={{flexDirection: 'row', backgroundColor: "#555", paddingBottom: 5}}>
+            <TextInput style={{flex: 1,margin: 4, backgroundColor: "#091212", borderRadius: 25}}/>
+            <TouchableOpacity style={{backgroundColor:"#383", justifyContent: 'center', borderRadius: 10, margin: 5, padding: 5}}>
+              <Text style={{fontSize: 25}}>✉️</Text>
+            </TouchableOpacity>
           </View>
         </View>
       );
