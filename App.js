@@ -12,14 +12,12 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 import store from './reducers/store';
 import { NavigationContainer, TabActions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { HeaderBackButton } from '@react-navigation/stack';
 
 
 import CreateAccount from './components/CreateAccount'
 import Login from './components/Login'
 import Home from './components/Home'
 import ChatScreen from './components/ChatScreen'
-import { setOnChatroom } from './reducers/navigatorOnChatroom';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,12 +26,6 @@ const App = () => {
   useEffect(() => {
     StatusBar.setBackgroundColor("#091212");
   }, []);
-  
-
-  const method = () => {
-    const dispatch = useDispatch();
-    dispatch(setOnChatroom(false));
-  }
 
   return (
     <Provider store={store}>
