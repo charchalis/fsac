@@ -20,9 +20,21 @@ const friendListReducer = createSlice({
       } else {
         console.log("Friend not found in the array.");
       }
+    },
+    receiveFsac: (state, action) => {
+      
+      const friendId = action.payload.friendId;
+      const friendIndex = state.list.findIndex(friend => friend.id === friendId);
+      
+      if (friendIndex !== -1) {
+        state.list[friendIndex].timespan = 1; 
+      } else {
+        console.log("Friend not found in the array.");
+      }
     }
+ 
   },
 });
 
-export const { log, setFriendList, addFriend, fsac } = friendListReducer.actions;
+export const { log, setFriendList, addFriend, fsac, receiveFsac } = friendListReducer.actions;
 export default friendListReducer.reducer;

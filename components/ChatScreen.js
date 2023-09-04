@@ -36,7 +36,9 @@ const ChatScreen = ({navigation}) => {
         <View style={{ flex: 1, alignItems: 'stretch', justifyContent: 'space-between', backgroundColor: "#091212"}}>
 
           <View style={{flex:1}}>
-            {}
+            {              
+              
+            }
             <Message />
             <Message/>
           </View>

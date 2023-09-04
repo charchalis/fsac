@@ -9,6 +9,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
+import { receiveFsac } from '../reducers/friendListReducer';
+
+
+
 import AnimatedRingExample from './AnimatedRingExample'
 import Settings from './Settings'
 import FriendsNavigator from './FriendsNavigator'
@@ -38,6 +42,9 @@ const Tab = createBottomTabNavigator();
 function Home({navigation}) {
 
   const [isFsacoso, setFsacoso] = useState(false);
+  
+  const dispatch = useDispatch();
+
 
   useEffect(() => {
 
@@ -56,6 +63,20 @@ function Home({navigation}) {
     getToken().then((token) => activateSocket(token))
 
     
+    socket.on("received fsac", (userId) => {
+      
+      console.log("UIUAUIAUIAUIAAUIA RECEIVED FSACCCCCCCCCCCCC")
+      console.log("from", userId)
+
+
+      Alert.alert(userId, "wants to fsac", [{
+        text: "hurray",
+        onPress: () => null
+      }])
+      
+      dispatch(receiveFsac({friendId: userId}))
+
+    })
     
     
     

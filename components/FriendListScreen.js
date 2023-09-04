@@ -14,15 +14,17 @@ const gimmeFriends = async () => {
   socket.emit("gimme friends", token)
 }
 
-const manageButtonFunction = async (friend) => {
+
+const manageButtonFunction = async (userId, friend) => {
 
   console.log("MANAGING BUTTON FUNCTION")
   
   if(!friend.timespan){
 
     console.log("sending fsac");
+    console.log(userId)
     const token = await AsyncStorage.getItem('JWT_TOKEN');
-    socket.emit('fsac?', {token, friendId: friend.id})
+    socket.emit('fsac?', {token, userId, friendId: friend.id})
 
   }else{
     
@@ -46,6 +48,7 @@ const manageButtonFunction = async (friend) => {
 
 const FriendListScreen = ({navigation}) => {
 
+  const userId = useSelector((state) => state.myUser.user).id
   const friendList = useSelector((state) => state.friendList.list)
 
   const dispatch = useDispatch();
@@ -94,7 +97,7 @@ const FriendListScreen = ({navigation}) => {
           <FriendCard key={friend.id}
             friend={friend}
             buttonString={friend.timespan && friend.timespan != 1 ? friend.timespan : 'fsac'}
-            buttonFunction={ () => manageButtonFunction(friend) }
+            buttonFunction={ () => manageButtonFunction(userId, friend) }
             navigation = { navigation }
           />))} 
 
