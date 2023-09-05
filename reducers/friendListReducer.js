@@ -31,6 +31,18 @@ const friendListReducer = createSlice({
       } else {
         console.log("Friend not found in the array.");
       }
+
+      //shift position to among the fsacosos
+      state.list = state.list.sort((a,b) => {
+        if (a.timespan === 1 && b.timespan !== 1) {
+          return -1; // a comes first
+        } else if (a.timespan !== 1 && b.timespan === 1) {
+          return 1; // b comes first
+        } else {
+          return a.timespan - b.timespan; // compare ages for non -1 values
+        }
+      })
+
     }
  
   },

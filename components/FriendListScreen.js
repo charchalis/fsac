@@ -8,6 +8,7 @@ import { log, setFriendList, fsac } from '../reducers/friendListReducer';
 import FriendCard from './FriendCard';
 
 
+
 const gimmeFriends = async () => {
   
   const token = await AsyncStorage.getItem('JWT_TOKEN');
@@ -93,6 +94,7 @@ const FriendListScreen = ({navigation}) => {
     return (
       <View style={styles.window}>
         <ScrollView >
+
           { friendList.map((friend) => (
           <FriendCard key={friend.id}
             friend={friend}
@@ -100,11 +102,6 @@ const FriendListScreen = ({navigation}) => {
             buttonFunction={ () => manageButtonFunction(userId, friend) }
             navigation = { navigation }
           />))} 
-
-          { friendList.map((friend) => {
-            const {image, ...friendo} = friend;
-            console.log(friendo)
-          })} 
 
         </ScrollView>
         <TouchableOpacity class="addFriendButton" style={styles.button}
@@ -141,7 +138,13 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 5,
     borderRadius: 10,
-  }
+  },
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
 })
 
 export default FriendListScreen;

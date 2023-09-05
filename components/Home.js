@@ -23,15 +23,9 @@ import socket from '../logic/socket'
 
 
 const activateSocket = (token) =>{
-    
-  socket.on("papers please", async () => {
-
-    console.log("papers")
   
-    console.log("token: ", token)
-    socket.emit("authenticate client socket", token)
-      
-  })
+  console.log("activating socket")
+  
 }
 
 
@@ -59,9 +53,19 @@ function Home({navigation}) {
 
     })
 
-    const getToken = async () => await AsyncStorage.getItem('JWT_TOKEN');
-    getToken().then((token) => activateSocket(token))
 
+    socket.on("papers please", async () => {
+
+      console.log("papers")
+    
+      const getToken = async () => await AsyncStorage.getItem('JWT_TOKEN');
+
+      const token = await getToken()
+
+      console.log("token: ", token)
+      socket.emit("authenticate client socket", token)
+        
+    })
     
     socket.on("received fsac", (userId) => {
       
