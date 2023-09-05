@@ -2,6 +2,7 @@ import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native'
 import {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
 import { setChatFriend, setOnChatroom } from '../reducers/navigatorOnChatroom';
+import AnimatedRingExample from './AnimatedRingExample';
 
 
 const showTime = (expireDate) => {
@@ -105,7 +106,18 @@ const FriendCard = (props) => {
       >
         <View style={{flex:1, flexDirection: 'row' }}>
 
-          <Image source={{ uri: image }} style={{ width: 60, height: 60 , backgroundColor: "#fff", borderRadius: 30, margin: 30, marginRight: 15}} />
+
+          <View>
+
+
+            <View style={{width: 60, height: 60 , backgroundColor: "#fff", borderRadius: 30, margin: 30, padding: 30, marginRight: 15, backgroundColor: "#fff", position: 'absolute'}}>
+              <View >
+              <AnimatedRingExample />
+              </View>
+            </View>
+            <Image source={{ uri: image }} style={{ width: 60, height: 60 , backgroundColor: "#fff", borderRadius: 30, margin: 30, marginRight: 15}} />
+
+          </View>
 
           <View style={{alignSelf: 'center', justifyContent: 'space-around'}}>
 

@@ -3,11 +3,14 @@ const axios = require('axios');
 import {API_URL} from '../constants'
 
 const myPost = async (endpoint = null , data = null) => {
+
     try{
         const response = await axios.post(API_URL + endpoint, data)
+        console.log("response: ", response)
         return {success: response.status === 200, data: response.data, }
     }catch(err){
-        console.log(err.response.data.message)
+        console.log("error: ", err.response.data.message)
+        console.log("error: ", err)
         return {success: false, message: err.response.data.message}
     }
 }
