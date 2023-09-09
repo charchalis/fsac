@@ -42,6 +42,7 @@ const manageButtonFunction = async (userId, friend) => {
 
     }else {
       console.log("OMGOMGOMGOMGOMGOMGOMGOMG ", friend.username, " wants to fsac with u <3")
+      socket.emit('accepted fsac', {userId, friendId: friend.id})
     }
   }
 }
@@ -85,8 +86,7 @@ const FriendListScreen = ({navigation}) => {
   },[])
   
   useEffect(() => {
-    
-    console.log("updated friend list")
+
     
 
   }, [friendList])
@@ -98,8 +98,6 @@ const FriendListScreen = ({navigation}) => {
           { friendList.map((friend) => (
           <FriendCard key={friend.id}
             friend={friend}
-            buttonString={friend.timespan && friend.timespan != 1 ? friend.timespan : 'fsac'}
-            buttonFunction={ () => manageButtonFunction(userId, friend) }
             navigation = { navigation }
           />))} 
 

@@ -1,8 +1,12 @@
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native'
 import {useEffect, useState} from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setChatFriend, setOnChatroom } from '../reducers/navigatorOnChatroom';
+import {declineFsac} from '../reducers/friendListReducer'
 import AnimatedRingExample from './AnimatedRingExample';
+import socket from '../logic/socket'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 const showTime = (expireDate) => {
@@ -19,19 +23,92 @@ const showTime = (expireDate) => {
   return (hours ? (hours < 10 ? '0' : '') + hours + ':' : '') + (hours || minutes ? (minutes < 10 ? '0' : '') + minutes + ':' : '') + (seconds < 10 ? '0' : '') + seconds
 }
 
+const renderDeclineButton = (friend) => {
+  
+  
+  return (
+    <TouchableOpacity class="friendFsacButton" style={[styles.button, {backgroundColor: "#f00"}]}
+          onPress={() => sendDeclineFsacRequest(friend)}>
+          <Text>no</Text>
+        </TouchableOpacity>
+  )
+  
+}
+
+const manageButtonFunction = async (userId, friend) => {
+  
+    if(!friend.timespan) sendFsac(userId, friend)
+    else if(friend.timespan != 1) showAuthoritarianToast()
+    else acceptFsac(friend)
+}
+
+const manageButtonString = (timespan) => {
+  
+  return !timespan ?
+  "fsac" : timespan != 1 ?
+    timespan : "accept"
+  
+  console.log("str: ", str)
+  
+  return str
+
+}
+
+const manageButtonColor = (timespan) => {
+  return timespan && timespan != 1 ? "#222" : "f80"
+
+}
+
+const sendFsac = async (userId, friend) => {
+    console.log("sending fsac");
+    console.log(userId)
+    const token = await AsyncStorage.getItem('JWT_TOKEN');
+    socket.emit('fsac?', {token, userId, friendId: friend.id})
+}
+
+const showAuthoritarianToast = () => {
+  ToastAndroid.showWithGravity(
+    'You can send another fsac after the countdown',
+    ToastAndroid.SHORT,
+    ToastAndroid.CENTER,
+  );
+}
+
+const acceptFsac = async (friend) => {
+  console.log(Object.keys(friend))
+  console.log("OMGOMGOMGOMGOMGOMGOMGOMG ", friend.username, " wants to fsac with u <3")
+  const token = await AsyncStorage.getItem('JWT_TOKEN');
+  socket.emit('accepted fsac', {token, friendId: friend.id})
+}
+
+const sendDeclineFsacRequest = async (friend) => {
+  console.log("declining fsac")
+  const token = await AsyncStorage.getItem('JWT_TOKEN');
+  socket.emit('declined fsac', {token, friendId: friend.id})
+  
+}
+
+
+
+
+
 
 const FriendCard = (props) => {
   
 
-  const { friend, buttonString, buttonFunction, navigation } = props;
+  const { friend, navigation } = props;
   
+  const userId = useSelector((state) => state.myUser.user).id
+
   const [image, setImage] = useState(`data:image/jpeg;base64,${friend.image}`);
   
-  const [buttonColor, setButtonColor] = useState("#f80");
+  
+  const [buttonColor, setButtonColor] = useState(manageButtonColor(friend.timespan));
 
-  const [buttonStr, setButtonStr] = useState(buttonString);
+  const [buttonStr, setButtonStr] = useState(manageButtonString(friend.timespan));
   
   const dispatch = useDispatch();
+  
   
   const goToChatScreen = (friend) => {
     dispatch(setChatFriend(friend))
@@ -39,8 +116,13 @@ const FriendCard = (props) => {
   }
 
   useEffect(() => {
+    
+    socket.on("successful fsac decline", (friendId) => {
+      dispatch(declineFsac(friendId))
+      setButtonStr("fsac")
+    })
 
-  },[friend])
+  },[])
 
   useEffect(() => {
 
@@ -83,22 +165,35 @@ const FriendCard = (props) => {
     return (
       <View style={styles.friendContainer}>
         <View style={{flex:1, flexDirection: 'row'}}>
+          { friend.timespan === 1 ? ( 
+            <View style={{width: 60, height: 60 , backgroundColor: "#fff", borderRadius: 30, margin: 30, padding: 30, marginRight: 15, backgroundColor: "#fff", position: 'absolute'}}>
+              <View >
+              <AnimatedRingExample />
+              </View>
+            </View>
+            ):null
+          }
           <Image source={{ uri: image }} style={{ width: 60, height: 60 , backgroundColor: "#fff", borderRadius: 30, margin: 30, marginRight: 15}} />
           <View style={{alignSelf: 'center'}}>
             <Text style={{fontSize: 20}}>{friend.username}</Text>
-            <Text style={{fontSize: 13}}>{friend.firstName + " " + friend.lastName}</Text>
+            <Text style={{fontSize: 13}}>{friend.firstName + " " + friend.lastName}{friend.timespan === 1 ? " wants to fsac" : null}</Text>
           </View>
         </View>
   
+        {friend.timespan && friend.timespan === 1 ? renderDeclineButton(friend) : null}
+
         <TouchableOpacity class="friendFsacButton" style={[styles.button, {backgroundColor: buttonColor}]}
-          onPress={buttonFunction}>
+          onPress={() => manageButtonFunction(userId, friend)}>
           <Text>{buttonStr}</Text>
         </TouchableOpacity>
       </View>
     )
   }
   
-  const fsacCard = () => {
+
+  
+  
+  const fsacingCard = () => {
     return (
       <TouchableOpacity
         style={[styles.friendContainer, {paddingRight: 0}]}
@@ -138,7 +233,8 @@ const FriendCard = (props) => {
     )
   }
 
-  return friend.timespan != 1 ? regularCard() : fsacCard()
+  //return friend.timespan != 1 ? regularCard() : fsacingCard()
+  return regularCard()
 }
 
 

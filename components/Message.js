@@ -4,18 +4,24 @@ import {useEffect} from 'react'
 const Message = (props) => {
     
     //const {userId, username} = props
+    const message = props.message;
+    const mine = props.mine;
+    
+    const date = new Date(message.date)
+
+    console.log("MESSAGE: ", Object.keys(message))
 
     //console.log(userId)
     //console.log(username)
   
     return (
-        <View style={{ backgroundColor: "#f00", alignSelf: 'flex-start', padding: 7, borderRadius: 15, margin: 5}}>
+        <View style={[{ padding: 7, borderRadius: 15, margin: 5}, mine ? {alignSelf: 'flex-end', backgroundColor: "#f00"} : {alignSelf: 'flex-start', backgroundColor: "#00f"}]}>
 
-            <Text style={{fontSize: 15}}>lorem ipsum yo ass in the ppsum</Text>
+            <Text style={{fontSize: 15}}>{message.text}</Text>
             
             <View style={{flexDirection: 'row', alignSelf:'flex-end'}}>
-                <Text style={{fontSize: 12, marginRight: 3}}>4:20</Text>
-                <Text style={{fontSize: 12}}>seen</Text>
+                <Text style={{fontSize: 12, marginRight: 3}}>{date.getHours()} : {date.getMinutes()}</Text>
+                <Text style={{fontSize: 12}}>{message.seen ? 'seen' : 'not seen'} </Text>
             </View>
         </View>
       );

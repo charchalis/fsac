@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addFriend } from '../reducers/friendListReducer';
 
 
-import FriendCard from './FriendCard';
+import PossibleFriendCard from './PossibleFriendCard';
 
 
 const AddFriendScreen = ({navigation}) => {
@@ -80,10 +80,9 @@ const AddFriendScreen = ({navigation}) => {
             </View>
         ) : (
             <ScrollView>
-                { possibleFriends.map((friend) => (<FriendCard key={friend.id}
-                friend={friend}
-                buttonString={'add friend'}
-                buttonFunction={async () => {const token = await AsyncStorage.getItem('JWT_TOKEN'); socket.emit('add friend', {token, friend: friend})}}/>)) }
+                {
+                  possibleFriends.map((friend) => (<PossibleFriendCard key={friend.id}friend={friend}/>))
+                }
                 
             </ScrollView>
         )}

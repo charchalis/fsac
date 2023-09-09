@@ -43,10 +43,36 @@ const friendListReducer = createSlice({
         }
       })
 
+    },
+    declineFsac: (state, action) => {
+      
+      console.log("reducer decline")
+      const friendId = action.payload;
+      const friendIndex = state.list.findIndex(friend => friend.id === friendId);
+      console.log(state.list[friendIndex])
+      console.log("reducer decline")
+      
+      if (friendIndex !== -1) {
+        state.list[friendIndex].timespan = null; 
+      } else {
+        console.log("Friend not found in the array.");
+      }
+
+      //shift position to among the fsacosos
+      state.list = state.list.sort((a,b) => {
+        if (a.timespan === 1 && b.timespan !== 1) {
+          return -1; // a comes first
+        } else if (a.timespan !== 1 && b.timespan === 1) {
+          return 1; // b comes first
+        } else {
+          return a.timespan - b.timespan; // compare ages for non -1 values
+        }
+      })
+
     }
  
   },
 });
 
-export const { log, setFriendList, addFriend, fsac, receiveFsac } = friendListReducer.actions;
+export const { log, setFriendList, addFriend, fsac, receiveFsac, declineFsac } = friendListReducer.actions;
 export default friendListReducer.reducer;
