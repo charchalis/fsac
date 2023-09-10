@@ -32,8 +32,6 @@ const PossibleFriendCard = (props) => {
         </View>
       </View>
 
-      {friend.timespan === 1 ? renderDeclineButton(friend) : null}
-
       <TouchableOpacity class="friendFsacButton" style={[styles.button, {backgroundColor: buttonColor}]}
         onPress={buttonFunction}>
         <Text>{buttonStr}</Text>

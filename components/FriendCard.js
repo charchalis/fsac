@@ -1,8 +1,8 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native'
+import {View, Text, StyleSheet, Image, TouchableOpacity, ToastAndroid} from 'react-native'
 import {useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setChatFriend, setOnChatroom } from '../reducers/navigatorOnChatroom';
-import {declineFsac} from '../reducers/friendListReducer'
+import {declineFsac, acceptFsac} from '../reducers/friendListReducer'
 import AnimatedRingExample from './AnimatedRingExample';
 import socket from '../logic/socket'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -37,25 +37,22 @@ const renderDeclineButton = (friend) => {
 
 const manageButtonFunction = async (userId, friend) => {
   
-    if(!friend.timespan) sendFsac(userId, friend)
-    else if(friend.timespan != 1) showAuthoritarianToast()
-    else acceptFsac(friend)
+    friend.statuss === 'no fsac' ? sendFsac(userId, friend) :
+    friend.statuss === 'sent fsac' ? showAuthoritarianToast() :
+    friend.statuss === 'received fsac' ? sendAcceptFsacRequest(friend) : null
 }
 
-const manageButtonString = (timespan) => {
+const manageButtonString = (status, endDate ) => {
   
-  return !timespan ?
-  "fsac" : timespan != 1 ?
-    timespan : "accept"
+  return status === "no fsac"  ? "fsac" :
+  status === "sent fsac" ? endDate :
+  status === "received fsac" ? "accept" : 
+  status === "declined" ? "fsac" : "i should not be here"
   
-  console.log("str: ", str)
-  
-  return str
-
 }
 
-const manageButtonColor = (timespan) => {
-  return timespan && timespan != 1 ? "#222" : "f80"
+const manageButtonColor = (endDate) => {
+  return endDate ? "#222" : "f80"
 
 }
 
@@ -74,9 +71,9 @@ const showAuthoritarianToast = () => {
   );
 }
 
-const acceptFsac = async (friend) => {
+const sendAcceptFsacRequest = async (friend) => {
   console.log(Object.keys(friend))
-  console.log("OMGOMGOMGOMGOMGOMGOMGOMG ", friend.username, " wants to fsac with u <3")
+  console.log("accepting fsac with", friend.username)
   const token = await AsyncStorage.getItem('JWT_TOKEN');
   socket.emit('accepted fsac', {token, friendId: friend.id})
 }
@@ -103,9 +100,9 @@ const FriendCard = (props) => {
   const [image, setImage] = useState(`data:image/jpeg;base64,${friend.image}`);
   
   
-  const [buttonColor, setButtonColor] = useState(manageButtonColor(friend.timespan));
+  const [buttonColor, setButtonColor] = useState(manageButtonColor(friend.statuss));
 
-  const [buttonStr, setButtonStr] = useState(manageButtonString(friend.timespan));
+  const [buttonStr, setButtonStr] = useState(manageButtonString(friend.statuss, friend.endDate));
   
   const dispatch = useDispatch();
   
@@ -121,17 +118,24 @@ const FriendCard = (props) => {
       dispatch(declineFsac(friendId))
       setButtonStr("fsac")
     })
+    
+    socket.on("successful accept fsac", ({chatroomId, friendId}) => {
+
+      console.log("successful accept fsac")
+
+      dispatch(acceptFsac({chatroomId, friendId}))
+    })
 
   },[])
 
   useEffect(() => {
 
-    console.log(friend.username, " timespan:", friend.timespan)
+    console.log(friend.username, " status:", friend.statuss)
 
-    if(friend.timespan && friend.timespan != 1){
+    if(friend.statuss === "sent fsac"){
 
       setButtonColor("#222");
-      setButtonStr(showTime(friend.timespan))
+      setButtonStr(showTime(friend.endDate))
 
     }else{
 
@@ -139,11 +143,11 @@ const FriendCard = (props) => {
 
     }
 
-  },[friend.timespan])
+  },[friend.endDate])
 
   useEffect(() => {
 
-    if(friend.timespan && friend.timespan != 1){
+    if(friend.statuss === "sent fsac"){
       
       function sleep(milliseconds) {
         return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -151,7 +155,7 @@ const FriendCard = (props) => {
 
       async function updateButtonString() {
         await sleep(1000);
-        setButtonStr(showTime(friend.timespan))
+        setButtonStr(showTime(friend.endDate))
       }
       
       updateButtonString()
@@ -180,7 +184,7 @@ const FriendCard = (props) => {
           </View>
         </View>
   
-        {friend.timespan && friend.timespan === 1 ? renderDeclineButton(friend) : null}
+        {friend.statuss === 'received fsac' ? renderDeclineButton(friend) : null}
 
         <TouchableOpacity class="friendFsacButton" style={[styles.button, {backgroundColor: buttonColor}]}
           onPress={() => manageButtonFunction(userId, friend)}>
@@ -233,8 +237,8 @@ const FriendCard = (props) => {
     )
   }
 
-  //return friend.timespan != 1 ? regularCard() : fsacingCard()
-  return regularCard()
+  return !friend.chatroomId ? regularCard() : fsacingCard()
+  //return regularCard()
 }
 
 

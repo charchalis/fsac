@@ -16,38 +16,6 @@ const gimmeFriends = async () => {
 }
 
 
-const manageButtonFunction = async (userId, friend) => {
-
-  console.log("MANAGING BUTTON FUNCTION")
-  
-  if(!friend.timespan){
-
-    console.log("sending fsac");
-    console.log(userId)
-    const token = await AsyncStorage.getItem('JWT_TOKEN');
-    socket.emit('fsac?', {token, userId, friendId: friend.id})
-
-  }else{
-    
-    if(friend.timespan != 1){
-
-      const showToast = () => {
-        ToastAndroid.showWithGravity(
-          'You can send another fsac after the countdown',
-          ToastAndroid.SHORT,
-          ToastAndroid.CENTER,
-        );
-      };
-      showToast()
-
-    }else {
-      console.log("OMGOMGOMGOMGOMGOMGOMGOMG ", friend.username, " wants to fsac with u <3")
-      socket.emit('accepted fsac', {userId, friendId: friend.id})
-    }
-  }
-}
-
-
 const FriendListScreen = ({navigation}) => {
 
   const userId = useSelector((state) => state.myUser.user).id
@@ -62,11 +30,11 @@ const FriendListScreen = ({navigation}) => {
       dispatch(setFriendList(friends))
     })
 
-    socket.on("fsac invite successful", ({friendId, timespan}) => {
+    socket.on("fsac invite successful", ({friendId, endDate}) => {
       console.log("fsac invite successfull")
       console.log(friendId)
-      console.log(timespan)
-      dispatch(fsac({friendId, timespan}))
+      console.log(endDate)
+      dispatch(fsac({friendId, endDate}))
 
       const showToast = () => {
         ToastAndroid.showWithGravity(

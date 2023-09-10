@@ -12,11 +12,12 @@ const friendListReducer = createSlice({
     fsac: (state, action) => {
       
       const friendId = action.payload.friendId;
-      const timespan = action.payload.timespan;
+      const endDate = action.payload.endDate;
       const friendIndex = state.list.findIndex(friend => friend.id === friendId);
       
       if (friendIndex !== -1) {
-        state.list[friendIndex].timespan = timespan; 
+        state.list[friendIndex].endDate = endDate; 
+        state.list[friendIndex].statuss = "sent fsac"; 
       } else {
         console.log("Friend not found in the array.");
       }
@@ -27,19 +28,19 @@ const friendListReducer = createSlice({
       const friendIndex = state.list.findIndex(friend => friend.id === friendId);
       
       if (friendIndex !== -1) {
-        state.list[friendIndex].timespan = 1; 
+        state.list[friendIndex].endDate = 1; 
       } else {
         console.log("Friend not found in the array.");
       }
 
       //shift position to among the fsacosos
       state.list = state.list.sort((a,b) => {
-        if (a.timespan === 1 && b.timespan !== 1) {
+        if (a.endDate === 1 && b.endDate !== 1) {
           return -1; // a comes first
-        } else if (a.timespan !== 1 && b.timespan === 1) {
+        } else if (a.endDate !== 1 && b.endDate === 1) {
           return 1; // b comes first
         } else {
-          return a.timespan - b.timespan; // compare ages for non -1 values
+          return a.endDate - b.endDate; // compare ages for non -1 values
         }
       })
 
@@ -53,26 +54,54 @@ const friendListReducer = createSlice({
       console.log("reducer decline")
       
       if (friendIndex !== -1) {
-        state.list[friendIndex].timespan = null; 
+        state.list[friendIndex].statuss = "declined"; 
       } else {
         console.log("Friend not found in the array.");
       }
 
       //shift position to among the fsacosos
       state.list = state.list.sort((a,b) => {
-        if (a.timespan === 1 && b.timespan !== 1) {
+        if (a.endDate === 1 && b.endDate !== 1) {
           return -1; // a comes first
-        } else if (a.timespan !== 1 && b.timespan === 1) {
+        } else if (a.endDate !== 1 && b.endDate === 1) {
           return 1; // b comes first
         } else {
-          return a.timespan - b.timespan; // compare ages for non -1 values
+          return a.endDate - b.endDate; // compare ages for non -1 values
         }
       })
 
-    }
- 
+    },
+    acceptFsac: (state, action) => {
+      
+      console.log("reducer accept")
+      const friendId = action.payload.friendId;
+      console.log("friendId: ", friendId)
+      console.log("payload: ", action.payload)
+      const chatroomId = action.payload.chatroomId
+      const friendIndex = state.list.findIndex(friend => friend.id === friendId);
+      console.log("reducer accept")
+      
+      if (friendIndex !== -1) {
+        //state.list[friendIndex].endDate = null; 
+        state.list[friendIndex].chatroomId = chatroomId; 
+      } else {
+        console.log("Friend not found in the array.");
+      }
+
+      //shift position to among the fsacosos
+      state.list = state.list.sort((a,b) => {
+        if (a.endDate === 1 && b.endDate !== 1) {
+          return -1; // a comes first
+        } else if (a.endDate !== 1 && b.endDate === 1) {
+          return 1; // b comes first
+        } else {
+          return a.endDate - b.endDate; // compare ages for non -1 values
+        }
+      })
+
+    },
   },
 });
 
-export const { log, setFriendList, addFriend, fsac, receiveFsac, declineFsac } = friendListReducer.actions;
+export const { log, setFriendList, addFriend, fsac, receiveFsac, declineFsac, acceptFsac } = friendListReducer.actions;
 export default friendListReducer.reducer;
