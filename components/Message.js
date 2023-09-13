@@ -1,11 +1,10 @@
 import {View, Text, TextInput, Image, TouchableOpacity} from 'react-native'
-import {useEffect} from 'react'
+import React, {useEffect} from 'react'
 
-const Message = (props) => {
+const Message = React.memo(({message, mine}) => {
     
-    //const {userId, username} = props
-    const message = props.message;
-    const mine = props.mine;
+    console.log("message: ", message)
+    console.log("mine: ", mine)
     
     const date = new Date(message.date)
 
@@ -25,6 +24,6 @@ const Message = (props) => {
             </View>
         </View>
       );
-}
+})
 
 export default Message;
