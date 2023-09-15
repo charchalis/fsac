@@ -38,12 +38,10 @@ const Tab = createBottomTabNavigator();
 function Home({navigation}) {
 
   const [isFsacoso, setFsacoso] = useState(false);
+
+  const notifications = useSelector(state => state.tabNavigation.notifications)
   
   const dispatch = useDispatch();
-
-
-  const [friendAlert , setFriendAlert] = useState(null)
-  const [eventAlert, setEventAlert] = useState(20)
 
 
   useEffect(() => {
@@ -62,25 +60,21 @@ function Home({navigation}) {
 
     socket.on("papers please", async () => {
 
-      console.log("papers")
+      console.log("Home.js: socket emition: papers please")
     
       const getToken = async () => await AsyncStorage.getItem('JWT_TOKEN');
 
       const token = await getToken()
 
-      console.log("token: ", token)
       socket.emit("authenticate client socket", token)
         
     })
     
     socket.on("received fsac", (userId) => {
       
-      console.log("UIUAUIAUIAUIAAUIA RECEIVED FSACCCCCCCCCCCCC")
-      console.log("from", userId)
+      console.log("Home.js: socket.emition: received fsac from ", userId)
 
       dispatch(addNotification({screen:'friends'}))
-
-
 
       //Alert.alert(userId, "wants to fsac", [{
         //text: "hurray",
@@ -93,8 +87,12 @@ function Home({navigation}) {
 
     socket.on("received private message", ({userId, message}) => {
       
-      console.log("received private message: ", message)
+
+      console.log("Home.js: socket.emition: receiverd private message from ", userId)
+      console.log("message: ", message)
+      
       dispatch(newMessage({friendId: userId, message: message}))
+      dispatch(addNotification({screen:'friends'}))
       
     })
 
@@ -110,16 +108,8 @@ function Home({navigation}) {
     }
   }, [onChatroom]);
 
-  const focusedScreen = useSelector(state => state.tabNavigation.screen)
   
-  useEffect(() => {
-
-    console.log("focused screen: ", focusedScreen)
-
-  },[focusedScreen]);
-
   
-  const notifications = useSelector(state => state.tabNavigation.notifications)
 
 
   return (

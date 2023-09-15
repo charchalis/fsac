@@ -4,7 +4,7 @@ const tabNavigation = createSlice({
   name: 'tabNavigation',
   initialState: {
     screen: 'friends',
-    notifications: {friends: 9, fsacs: "+", events: null, settings: null}
+    notifications: {friends: null, fsacs: null, events: null, settings: null}
   },
   reducers: {
     setScreen: (state, action) => {

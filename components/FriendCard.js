@@ -57,8 +57,9 @@ const manageButtonColor = (endDate) => {
 }
 
 const sendFsac = async (userId, friend) => {
-    console.log("sending fsac");
-    console.log(userId)
+  
+    console.log("FriendCard.js: sending fsac to ", userId)
+
     const token = await AsyncStorage.getItem('JWT_TOKEN');
     socket.emit('fsac?', {token, userId, friendId: friend.id})
 }
@@ -72,14 +73,14 @@ const showAuthoritarianToast = () => {
 }
 
 const sendAcceptFsacRequest = async (friend) => {
-  console.log(Object.keys(friend))
-  console.log("accepting fsac with", friend.username)
+  console.log("FriendCard.js: emmiting back: accepted fsac with ", userId)
+
   const token = await AsyncStorage.getItem('JWT_TOKEN');
   socket.emit('accepted fsac', {token, friendId: friend.id})
 }
 
 const sendDeclineFsacRequest = async (friend) => {
-  console.log("declining fsac")
+  console.log("FriendCard.js: emmiting back: declined fsac with ", userId)
   const token = await AsyncStorage.getItem('JWT_TOKEN');
   socket.emit('declined fsac', {token, friendId: friend.id})
   
@@ -115,14 +116,13 @@ const FriendCard = (props) => {
   useEffect(() => {
     
     socket.on("successful fsac decline", (friendId) => {
+      console.log("FriendCard.js: socket.emition: successful decline fsac from ", friendId)
       dispatch(declineFsac(friendId))
       setButtonStr("fsac")
     })
     
     socket.on("successful accept fsac", ({chatroomId, friendId}) => {
-
-      console.log("successful accept fsac")
-
+      console.log("FriendCard.js: socket.emition: successful accept fsac from ", friendId)
       dispatch(acceptFsac({chatroomId, friendId}))
     })
 
@@ -130,17 +130,11 @@ const FriendCard = (props) => {
 
   useEffect(() => {
 
-    console.log(friend.username, " status:", friend.statuss)
-
     if(friend.statuss === "sent fsac"){
-
       setButtonColor("#222");
       setButtonStr(showTime(friend.endDate))
-
     }else{
-
       setButtonColor("#f80");
-
     }
 
   },[friend.endDate])

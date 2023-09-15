@@ -27,16 +27,15 @@ const FriendListScreen = ({navigation}) => {
 
     
     socket.on("take friend list", (friends) => {
-      console.log("got friend list")
+      console.log("FriendListScreen.js: socket.emition: take friend list")
       dispatch(setFriendList(friends))
     })
 
     
 
     socket.on("fsac invite successful", ({friendId, endDate}) => {
-      console.log("fsac invite successfull")
-      console.log(friendId)
-      console.log(endDate)
+
+      console.log("FriendListScreen.js: socket.emition: fsac invite successfull")
       dispatch(fsac({friendId, endDate}))
 
       const showToast = () => {
