@@ -28,7 +28,7 @@ const friendListReducer = createSlice({
       const friendIndex = state.list.findIndex(friend => friend.id === friendId);
       
       if (friendIndex !== -1) {
-        state.list[friendIndex].endDate = 1; 
+        state.list[friendIndex].statuss = "received fsac"; 
       } else {
         console.log("Friend not found in the array.");
       }
@@ -100,8 +100,29 @@ const friendListReducer = createSlice({
       })
 
     },
+    newMessage: (state, action) => {
+      
+      console.log("reducer newMessage")
+      const friendId = action.payload.friendId;
+      const message = action.payload.message;
+      console.log("friendId: ", friendId)
+      console.log("message: ", message)
+      const friendIndex = state.list.findIndex(friend => friend.id === friendId);
+      console.log("reducer newMessage")
+      
+      if (friendIndex !== -1) {
+        //state.list[friendIndex].endDate = null; 
+        state.list[friendIndex].messages.push(message); 
+      } else {
+        console.log("Friend not found in the array.");
+      }
+
+      
+
+    },
+
   },
 });
 
-export const { log, setFriendList, addFriend, fsac, receiveFsac, declineFsac, acceptFsac } = friendListReducer.actions;
+export const { log, setFriendList, addFriend, fsac, receiveFsac, declineFsac, acceptFsac, NewMessage } = friendListReducer.actions;
 export default friendListReducer.reducer;

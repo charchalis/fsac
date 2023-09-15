@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 import { receiveFsac } from '../reducers/friendListReducer';
+import { newMessage } from '../reducers/friendListReducer';
 
 
 
@@ -19,6 +20,7 @@ import FriendsNavigator from './FriendsNavigator'
 import Fsacs from './Fsacs'
 import Events from './Events'
 import socket from '../logic/socket'
+import { addNotification, updateNotifications } from '../reducers/tabNavigationReducer';
 
 
 
@@ -38,6 +40,10 @@ function Home({navigation}) {
   const [isFsacoso, setFsacoso] = useState(false);
   
   const dispatch = useDispatch();
+
+
+  const [friendAlert , setFriendAlert] = useState(null)
+  const [eventAlert, setEventAlert] = useState(20)
 
 
   useEffect(() => {
@@ -72,20 +78,29 @@ function Home({navigation}) {
       console.log("UIUAUIAUIAUIAAUIA RECEIVED FSACCCCCCCCCCCCC")
       console.log("from", userId)
 
+      dispatch(addNotification({screen:'friends'}))
 
-      Alert.alert(userId, "wants to fsac", [{
-        text: "hurray",
-        onPress: () => null
-      }])
+
+
+      //Alert.alert(userId, "wants to fsac", [{
+        //text: "hurray",
+        //onPress: () => null
+      //}])
       
       dispatch(receiveFsac({friendId: userId}))
 
     })
-    
-    
-    
-  }, []);
 
+    socket.on("received private message", ({userId, message}) => {
+      
+      console.log("received private message: ", message)
+      dispatch(newMessage({friendId: userId, message: message}))
+      
+    })
+
+    
+    
+  },[])
 
   const onChatroom = useSelector(state => state.onChatroom.onChatroom)
   
@@ -94,7 +109,17 @@ function Home({navigation}) {
       navigation.navigate('ChatScreen')
     }
   }, [onChatroom]);
-   
+
+  const focusedScreen = useSelector(state => state.tabNavigation.screen)
+  
+  useEffect(() => {
+
+    console.log("focused screen: ", focusedScreen)
+
+  },[focusedScreen]);
+
+  
+  const notifications = useSelector(state => state.tabNavigation.notifications)
 
 
   return (
@@ -121,19 +146,22 @@ function Home({navigation}) {
 
 
 
-      <Tab.Screen name="events"
-      component={Events}
+      
+
+      <Tab.Screen name="friends" component={FriendsNavigator}
       options={{
-        headerShown: false, 
+        tabBarBadge: notifications.friends , 
+        headerShown: false,
         tabBarIcon: ({focused, color, size}) =>
-          <FontAwesomeIcon icon={faHouse} color={color} size={size}/>
-      }} />
+          <FontAwesomeIcon icon={faPerson} color={color} size={size} />
+      }}/>
 
 
 
       <Tab.Screen name="fsacs"
         component={Fsacs}
         options={{
+          tabBarBadge: notifications.fsacs, 
           headerShown: false,
           tabBarIcon: ({focused, color, size}) =>
           <FontAwesomeIcon icon={faEye} color={color} size={size} />
@@ -150,17 +178,20 @@ function Home({navigation}) {
 
 
 
-      <Tab.Screen name="friends" component={FriendsNavigator}
+      <Tab.Screen name="events"
+      component={Events}
       options={{
-        headerShown: false,
+        tabBarBadge: notifications.events, 
+        headerShown: false, 
         tabBarIcon: ({focused, color, size}) =>
-          <FontAwesomeIcon icon={faPerson} color={color} size={size} />
-      }}/>
+          <FontAwesomeIcon icon={faHouse} color={color} size={size}/>
+      }} />
 
 
 
       <Tab.Screen name="settings" component={Settings}
       options={{
+        tabBarBadge: notifications.settings, 
         headerShown: false,
         tabBarIcon: ({focused, color, size}) =>
           <FontAwesomeIcon icon={faGear} color={color} size={size}/>
@@ -181,7 +212,7 @@ const FsacButton = (props) =>
     */}
         <TouchableOpacity 
         style={{flex: 1, flexDirection: "column",  justifyContent: "center", alignItems: "center", padding: "6%", borderRadius: 100, borderWidth: 2, backgroundColor: "#56b643"}}
-        onPress={()=> {props.setFsacoso(!props.isFsacoso)}}>    
+        onPress={()=> {props.setFsacoso(!props.isFsacoso);socket.emit("popo")}}  >    
           {              
             props.isFsacoso ? 
             <AnimatedRingExample/>

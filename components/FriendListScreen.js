@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import socket from '../logic/socket'
 import { useSelector, useDispatch } from 'react-redux';
-import { log, setFriendList, fsac } from '../reducers/friendListReducer';
+import { log, setFriendList, fsac, NewMessage } from '../reducers/friendListReducer';
 
 import FriendCard from './FriendCard';
 
@@ -24,11 +24,14 @@ const FriendListScreen = ({navigation}) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+
     
     socket.on("take friend list", (friends) => {
       console.log("got friend list")
       dispatch(setFriendList(friends))
     })
+
+    
 
     socket.on("fsac invite successful", ({friendId, endDate}) => {
       console.log("fsac invite successfull")

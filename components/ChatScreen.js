@@ -13,9 +13,12 @@ const ChatScreen = ({navigation}) => {
   const myUser = useSelector(state => state.myUser.user)
   const friend = useSelector(state => state.onChatroom.friend)
   
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState(friend.messages)
 
   const [newMessage, setNewMessage] = useState('')
+  
+  const [lastSeenMessageId, setLastSeenMessageId] = useState(-1)
+  
 
   const dispatch = useDispatch();
 
@@ -43,14 +46,17 @@ const ChatScreen = ({navigation}) => {
   useEffect(() => {
 
     //fetch messages
-    AsyncStorage.getItem('JWT_TOKEN').then( token => 
-      socket.emit('gimme messages', {token, chatroomId: friend.chatroomId}) )
+    //AsyncStorage.getItem('JWT_TOKEN').then( token => 
+      //socket.emit('gimme messages', {token, chatroomId: friend.chatroomId}) )
 
-    socket.on("take messages", messages => {
-      console.log("received messages")
-      console.log(messages)
-      setMessages(messages)
-    })
+    //socket.on("take messages", messages => {
+      //console.log("received messages")
+      //setMessages(messages)
+    //})
+
+    
+
+    //socket.on("friend seen", {chatroomId})
     
     // add friend image to header
     navigation.setOptions({ 
@@ -63,10 +69,53 @@ const ChatScreen = ({navigation}) => {
               <Text style={{fontSize: 23}}>{friend.username}</Text>
             </View>
     }); 
-    
+
+        
     return () => {dispatch(setOnChatroom(false))}
 
   }, []);
+
+  useEffect(() => {
+
+    if(messages.length === 0) return
+    if(lastSeenMessageId === messages[messages.length - 1].id) 
+
+    if(lastSeenMessageId === -1){
+
+      const smallestUnseenMessageId = messages.reduce((min, cur) => {
+        if(cur.id < min.id && !cur.seen && cur.userId != myUser.id) return cur
+        return min
+      }, messages[0])
+     
+      if(smallestUnseenMessageId) setLastSeenMessageId(smallestUnseenMessageId.id - 1)
+     
+    }
+    
+    const biggestUnseenMessageId = messages[messages.length - 1].id
+    console.log("BPH", biggestUnseenMessageId)
+
+    console.log("smallest: ", lastSeenMessageId)
+    console.log("biggest: ", biggestUnseenMessageId)
+    
+    if(biggestUnseenMessageId > lastSeenMessageId){
+ 
+      console.log("reporting seen messages")
+      
+      //report seen messages
+      AsyncStorage.getItem('JWT_TOKEN').then( token => 
+        socket.emit("seen new messages", {token, chatroomId: friend.chatroomId, friendId: friend.id, smallestMessageId: lastSeenMessageId, biggestMessageId: biggestUnseenMessageId}))
+
+      setMessages(messages.map(message => {
+        if(message.id > lastSeenMessageId && message.userId != myUser.id)
+          message.seen = 1 
+        return message
+        }))
+      console.log("upupupupup", JSON.stringify(messages,null,2))
+      setLastSeenMessageId(biggestUnseenMessageId)
+
+    }
+
+  }, [messages]);
 
     return (
         <View style={{ flex: 1, alignItems: 'stretch', justifyContent: 'space-between', backgroundColor: "#091212"}}>
@@ -76,9 +125,10 @@ const ChatScreen = ({navigation}) => {
             <FlatList ref={flatListRef}
               data={messages}
               keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
+              renderItem={({ item }) => {console.log("item: ", item); return (
                 <Message message={item} mine={myUser.id === item.userId}/>
-              )}
+              
+              )}}
               onContentSizeChange={() => flatListRef.current.scrollToEnd()} // Scroll to end on content size change
             />
 
