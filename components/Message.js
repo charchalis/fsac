@@ -1,12 +1,12 @@
 import {View, Text, TextInput, Image, TouchableOpacity} from 'react-native'
 import React, {useEffect} from 'react'
 
-//const Message = React.memo(({message, mine}) => {
-const Message = ({message, mine}) => {
+const Message = React.memo(({message, mine}) => {
+//const Message = ({message, mine}) => {
     
     const date = new Date(message.date)
 
-    //console.log("MESSAGE: ", Object.keys(message))
+    console.log("MESSAGE: ", Object.keys(message))
 
   
     return (
@@ -23,6 +23,6 @@ const Message = ({message, mine}) => {
             </View>
         </View>
       );
-}//)
+})
 
 export default Message;

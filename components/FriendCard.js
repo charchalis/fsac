@@ -45,7 +45,7 @@ const manageButtonFunction = async (userId, friend) => {
 const manageButtonString = (status, endDate ) => {
   
   return status === "no fsac"  ? "fsac" :
-  status === "sent fsac" ? endDate :
+  status === "sent fsac" ? showTime(endDate) :
   status === "received fsac" ? "accept" : 
   status === "declined" ? "fsac" : "i should not be here"
   
@@ -73,20 +73,25 @@ const showAuthoritarianToast = () => {
 }
 
 const sendAcceptFsacRequest = async (friend) => {
-  console.log("FriendCard.js: emmiting back: accepted fsac with ", userId)
+  console.log("FriendCard.js: emmiting back: accepted fsac with ", friend.id)
 
   const token = await AsyncStorage.getItem('JWT_TOKEN');
   socket.emit('accepted fsac', {token, friendId: friend.id})
 }
 
 const sendDeclineFsacRequest = async (friend) => {
-  console.log("FriendCard.js: emmiting back: declined fsac with ", userId)
+  console.log("FriendCard.js: emmiting back: declined fsac with ", friend.id)
   const token = await AsyncStorage.getItem('JWT_TOKEN');
   socket.emit('declined fsac', {token, friendId: friend.id})
   
 }
 
-
+const joinSocketRoom = async (friend) => {
+  console.log("FriendCard.js: emmiting back: add me to socketroom ", friend.id)
+  const token = await AsyncStorage.getItem('JWT_TOKEN');
+  socket.emit("add me to socketroom", {token, chatroomId: friend.chatroomId})
+  
+}
 
 
 
@@ -103,9 +108,14 @@ const FriendCard = (props) => {
   
   const [buttonColor, setButtonColor] = useState(manageButtonColor(friend.statuss));
 
-  const [buttonStr, setButtonStr] = useState(manageButtonString(friend.statuss, friend.endDate));
+  const [countdown, setCountdown] = useState(-1);
+
+  const [isTyping, setIsTyping] = useState(false)
+
   
   const dispatch = useDispatch();
+
+
   
   
   const goToChatScreen = (friend) => {
@@ -113,26 +123,13 @@ const FriendCard = (props) => {
     dispatch(setOnChatroom(true))
   }
 
-  useEffect(() => {
-    
-    socket.on("successful fsac decline", (friendId) => {
-      console.log("FriendCard.js: socket.emition: successful decline fsac from ", friendId)
-      dispatch(declineFsac(friendId))
-      setButtonStr("fsac")
-    })
-    
-    socket.on("successful accept fsac", ({chatroomId, friendId}) => {
-      console.log("FriendCard.js: socket.emition: successful accept fsac from ", friendId)
-      dispatch(acceptFsac({chatroomId, friendId}))
-    })
-
-  },[])
+  
 
   useEffect(() => {
 
     if(friend.statuss === "sent fsac"){
       setButtonColor("#222");
-      setButtonStr(showTime(friend.endDate))
+      setCountdown(showTime(friend.endDate))
     }else{
       setButtonColor("#f80");
     }
@@ -149,14 +146,14 @@ const FriendCard = (props) => {
 
       async function updateButtonString() {
         await sleep(1000);
-        setButtonStr(showTime(friend.endDate))
+        setCountdown(showTime(friend.endDate))
       }
       
       updateButtonString()
       
     }
 
-  },[buttonStr])
+  },[countdown])
 
   
   const regularCard = () => {
@@ -182,7 +179,7 @@ const FriendCard = (props) => {
 
         <TouchableOpacity class="friendFsacButton" style={[styles.button, {backgroundColor: buttonColor}]}
           onPress={() => manageButtonFunction(userId, friend)}>
-          <Text>{buttonStr}</Text>
+          <Text>{manageButtonString(friend.statuss, friend.endDate)}</Text>
         </TouchableOpacity>
       </View>
     )
@@ -213,6 +210,8 @@ const FriendCard = (props) => {
           </View>
 
           <View style={{alignSelf: 'center', justifyContent: 'space-around'}}>
+
+            {friend.typing ? <Text style={{backgroundColor:"#00f"}}>IS TYPING</Text> : null}
 
             <View style={{flexDirection: 'row', alignSelf: 'center', alignItems: 'center'}}>
               <Text style={{fontSize: 20}}>{friend.username}</Text>

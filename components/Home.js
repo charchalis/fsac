@@ -9,8 +9,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
-import { receiveFsac } from '../reducers/friendListReducer';
-import { newMessage } from '../reducers/friendListReducer';
+import { receiveFsac, newMessage, isTyping, acceptFsac } from '../reducers/friendListReducer';
+import { addNotification} from '../reducers/tabNavigationReducer';
 
 
 
@@ -20,8 +20,6 @@ import FriendsNavigator from './FriendsNavigator'
 import Fsacs from './Fsacs'
 import Events from './Events'
 import socket from '../logic/socket'
-import { addNotification, updateNotifications } from '../reducers/tabNavigationReducer';
-
 
 
 const activateSocket = (token) =>{
@@ -96,6 +94,27 @@ function Home({navigation}) {
       
     })
 
+    socket.on("accepted fsac", ({friendId, chatroomId}) => {
+      
+
+      console.log("Home.js: socket.emition: accepted fsac with ", friendId)
+      
+      dispatch(acceptFsac({friendId: userId, message: message}))
+      dispatch(addNotification({screen:'friends'}))
+      
+    })
+
+    socket.on("is typing", ({friendId, chatroomId, bool}) => {
+      
+      //TODO: logic for when its a group chat
+
+      console.log(friendId, " is typing in ", chatroomId, ": ", bool)
+
+      dispatch(isTyping({friendId, bool}))
+    
+    })
+
+    
     
     
   },[])
@@ -202,7 +221,7 @@ const FsacButton = (props) =>
     */}
         <TouchableOpacity 
         style={{flex: 1, flexDirection: "column",  justifyContent: "center", alignItems: "center", padding: "6%", borderRadius: 100, borderWidth: 2, backgroundColor: "#56b643"}}
-        onPress={()=> {props.setFsacoso(!props.isFsacoso);socket.emit("popo")}}  >    
+        onPress={()=> {props.setFsacoso(!props.isFsacoso)}}  >    
           {              
             props.isFsacoso ? 
             <AnimatedRingExample/>

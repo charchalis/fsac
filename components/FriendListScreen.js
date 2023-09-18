@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import socket from '../logic/socket'
 import { useSelector, useDispatch } from 'react-redux';
-import { log, setFriendList, fsac, NewMessage } from '../reducers/friendListReducer';
+import { log, setFriendList, fsac, NewMessage, acceptFsac } from '../reducers/friendListReducer';
 
 import FriendCard from './FriendCard';
 
@@ -31,6 +31,9 @@ const FriendListScreen = ({navigation}) => {
       dispatch(setFriendList(friends))
     })
 
+    socket.on("accepted fsac", ({friendId, chatroomId}) => {
+      dispatch(acceptFsac({friendId,chatroomId}))
+    })
     
 
     socket.on("fsac invite successful", ({friendId, endDate}) => {
@@ -49,7 +52,16 @@ const FriendListScreen = ({navigation}) => {
       showToast()
 
     })
+
+    socket.on("successful fsac decline", (friendId) => {
+      console.log("FriendListScreen.js: socket.emition: successful decline fsac from ", friendId)
+      dispatch(declineFsac(friendId))
+    })
     
+    socket.on("successful accept fsac", ({chatroomId, friendId}) => {
+      console.log("FriendListScreen.js: socket.emition: successful accept fsac from ", friendId)
+      dispatch(acceptFsac({chatroomId, friendId}))
+    })
     
     gimmeFriends();
 
