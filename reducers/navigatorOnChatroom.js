@@ -4,13 +4,13 @@ const navigatorOnChatroom = createSlice({
   name: 'navigatorOnChatRoom',
   initialState: {
     onChatroom: false,
-    friend: {}
+    friendId: {}
   },
   reducers: {
     setOnChatroom: (state, action) => {state.onChatroom = action.payload},
-    setChatFriend: (state, action) => {state.friend = action.payload}
+    setChatFriendId: (state, action) => {state.friendId = action.payload}
   },
 });
 
-export const { setOnChatroom, setChatFriend } = navigatorOnChatroom.actions;
+export const { setOnChatroom, setChatFriendId } = navigatorOnChatroom.actions;
 export default navigatorOnChatroom.reducer;

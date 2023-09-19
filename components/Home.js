@@ -88,10 +88,14 @@ function Home({navigation}) {
 
       console.log("Home.js: socket.emition: receiverd private message from ", userId)
       console.log("message: ", message)
-      
+
+      console.log("userid", userId)
+      console.log("message", message)
+
       dispatch(newMessage({friendId: userId, message: message}))
+
       dispatch(addNotification({screen:'friends'}))
-      
+
     })
 
     socket.on("accepted fsac", ({friendId, chatroomId}) => {
@@ -111,6 +115,7 @@ function Home({navigation}) {
       console.log(friendId, " is typing in ", chatroomId, ": ", bool)
 
       dispatch(isTyping({friendId, bool}))
+      console.log("is typing over")
     
     })
 

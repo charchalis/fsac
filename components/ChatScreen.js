@@ -1,4 +1,4 @@
-import {View, Text, TextInput, Image, TouchableOpacity, FlatList, ScrollView} from 'react-native'
+import {View, Text, TextInput, Image, TouchableOpacity, FlatList, ScrollView, Animated, Easing} from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React,{useEffect, useState, useRef} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,16 +10,24 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 import Message from './Message'
 import socket from '../logic/socket'
+import AnimatedDot from './AnimatedDot';
 
 
 const ChatScreen = ({navigation}) => {
   
   const myUser = useSelector(state => state.myUser.user)
-  const friend = useSelector(state => state.onChatroom.friend)
-  
-  const [messages, setMessages] = useState(friend.messages)
+  const friendId = useSelector(state => state.onChatroom.friendId)
+  const friend = useSelector(state => state.friendList.list).find(friend  => friend.id === friendId)
 
-  const [newMessage, setNewMessage] = useState('')
+  const dispatch = useDispatch();
+
+  
+  //const [messages, setMessages] = useState(friend.messages)
+  //const [messages, setMessages] = useState([])
+
+  const messages = friend.messages
+
+  const [newMessageText, setNewMessageText] = useState('')
   
   const [lastSeenMessageId, setLastSeenMessageId] = useState(-1)
 
@@ -27,7 +35,7 @@ const ChatScreen = ({navigation}) => {
   const [amTyping, setAmTyping] = useState(false)
   
 
-  const dispatch = useDispatch();
+  
 
   const flatListRef = useRef();
 
@@ -36,17 +44,21 @@ const ChatScreen = ({navigation}) => {
     const token = await AsyncStorage.getItem('JWT_TOKEN');
     console.log("-------------------sending message------------------")
     console.log("token: ", token)
-    console.log("message: ", newMessage)
+    console.log("message: ", newMessageText)
     console.log("sender: ", myUser.id)
     console.log("receiver: ", friend.id)
 
-    let message = {text: newMessage, userId: myUser.id, receiverId: friend.id, chatroomId: friend.chatroomId, seen: false, delivered: false, date: Date.now()}
+    const message = {text: newMessageText, userId: myUser.id, receiverId: friend.id, chatroomId: friend.chatroomId, seen: false, delivered: false, date: Date.now()}
 
-    socket.emit("sent private message", {token, message})
+    console.log(message)
+
+    //socket.emit("sent private message", {token, message})
     
-    setMessages([...messages, message])
-    setNewMessage('')
-    console.log(messages.length)
+    setNewMessageText('')
+
+    dispatch(newMessage({friendId: myUser.id, message: message}))
+    console.log(message)
+
   
   } 
 
@@ -61,22 +73,8 @@ const ChatScreen = ({navigation}) => {
 
     socket.on("take messages", messages => {
       console.log("received messages")
-      setMessages(messages)
+      //setMessages(messages)
     })
-
-    socket.on("is typing", ({friendId, chatroomId, bool}) => {
-      
-      //TODO: logic for when its a group chat
-
-      console.log(friendId, " is typing in ", chatroomId, ": ", bool)
-
-      //dispatch(isTyping({friendId, bool}))
-    
-      setIsTyping(bool)
-
-    })
-
-    
 
     //socket.on("friend seen", {chatroomId})
     
@@ -146,14 +144,27 @@ const ChatScreen = ({navigation}) => {
   }, [messages]);
 
   useEffect(() => {
-    setAmTyping(newMessage != '')
-  }, [newMessage])
+    setAmTyping(newMessageText != '')
+  }, [newMessageText])
 
   useEffect(() => {
-    console.log("amTyping: ", amTyping)
     AsyncStorage.getItem('JWT_TOKEN').then( token => 
       socket.emit("am typing", {token, chatroomId: friend.chatroomId, friendId: friend.id, bool: amTyping}))
   }, [amTyping])
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
 
 
     return (
@@ -167,14 +178,25 @@ const ChatScreen = ({navigation}) => {
                 <Message message={message} key={index} mine={myUser.id === message.userId}/>
             ) : null}
             
+          {friend.typing ? <Text style={{flex: 1, backgroundColor: "#00f"}}>typing</Text> : null}
+          {console.log("FRIEND IS TYPING: ",isTyping)}
+          <Message message={{text: "typing", date: -1}} key={-1} mine={false}/>
+          
+          <View style={{ minHeight: 50, padding: 7, borderRadius: 15, margin: 5, alignSelf: 'flex-start', alignItems: 'center', backgroundColor: "#00f", flexDirection: 'row'}}>
+            <AnimatedDot key={1} delay={0}/>
+            <AnimatedDot key={2} delay={200}/>
+            <AnimatedDot key={3} delay={400}/>
+            
+          </View>
+
+          <Message message={{text: "typing", date: -1}} key={-2} mine={false}/>
 
           </ScrollView>
 
-          {isTyping ? <Text style={{flex: 1, backgroundColor: "#00f"}}>typing</Text> : null}
-          {console.log("FRIEND IS TYPING: ",isTyping)}
+          
 
           <View style={{flexDirection: 'row', backgroundColor: "#555", paddingBottom: 5}}>
-            <TextInput  onChangeText={setNewMessage} value={newMessage} style={{flex: 1,margin: 4, backgroundColor: "#091212", borderRadius: 25}}/>
+            <TextInput  onChangeText={setNewMessageText} value={newMessageText} style={{flex: 1,margin: 4, backgroundColor: "#091212", borderRadius: 25}}/>
             <TouchableOpacity style={{backgroundColor:"#383", justifyContent: 'center', borderRadius: 10, margin: 5, padding: 5}}
               onPress={() => {dealWithMessageButton(); }}>
               <Text style={{fontSize: 25}}>✉️</Text>

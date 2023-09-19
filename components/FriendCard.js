@@ -1,7 +1,7 @@
 import {View, Text, StyleSheet, Image, TouchableOpacity, ToastAndroid} from 'react-native'
 import {useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setChatFriend, setOnChatroom } from '../reducers/navigatorOnChatroom';
+import { setChatFriendId, setOnChatroom } from '../reducers/navigatorOnChatroom';
 import {declineFsac, acceptFsac} from '../reducers/friendListReducer'
 import AnimatedRingExample from './AnimatedRingExample';
 import socket from '../logic/socket'
@@ -118,8 +118,8 @@ const FriendCard = (props) => {
 
   
   
-  const goToChatScreen = (friend) => {
-    dispatch(setChatFriend(friend))
+  const goToChatScreen = (friendId) => {
+    dispatch(setChatFriendId(friendId))
     dispatch(setOnChatroom(true))
   }
 
@@ -160,14 +160,6 @@ const FriendCard = (props) => {
     return (
       <View style={styles.friendContainer}>
         <View style={{flex:1, flexDirection: 'row'}}>
-          { friend.timespan === 1 ? ( 
-            <View style={{width: 60, height: 60 , backgroundColor: "#fff", borderRadius: 30, margin: 30, padding: 30, marginRight: 15, backgroundColor: "#fff", position: 'absolute'}}>
-              <View >
-              <AnimatedRingExample />
-              </View>
-            </View>
-            ):null
-          }
           <Image source={{ uri: image }} style={{ width: 60, height: 60 , backgroundColor: "#fff", borderRadius: 30, margin: 30, marginRight: 15}} />
           <View style={{alignSelf: 'center'}}>
             <Text style={{fontSize: 20}}>{friend.username}</Text>
@@ -192,7 +184,7 @@ const FriendCard = (props) => {
     return (
       <TouchableOpacity
         style={[styles.friendContainer, {paddingRight: 0}]}
-        onPress={ () => goToChatScreen(friend) }
+        onPress={ () => goToChatScreen(friend.id) }
       >
         <View style={{flex:1, flexDirection: 'row' }}>
 
@@ -211,15 +203,16 @@ const FriendCard = (props) => {
 
           <View style={{alignSelf: 'center', justifyContent: 'space-around'}}>
 
-            {friend.typing ? <Text style={{backgroundColor:"#00f"}}>IS TYPING</Text> : null}
+            
 
             <View style={{flexDirection: 'row', alignSelf: 'center', alignItems: 'center'}}>
               <Text style={{fontSize: 20}}>{friend.username}</Text>
               <Text style={{fontSize: 13, marginLeft: 10, alignSelf: 'center'}}>{friend.firstName + " " + friend.lastName}</Text>
             </View>
 
-            <View style={{ }}>
-              <Text style={{fontSize: 13, color: '#555', marginTop: 10}}>mensagem e o crl</Text>
+            <View style={{marginTop: 10}}>
+              {friend.typing ? <Text style={{fontSize: 13, color: '#555' }}>typing...</Text> : 
+              <Text style={{fontSize: 13, color: '#555'}}>{friend.messages[friend.messages.length - 1].text}</Text>}
             </View>
 
           </View>

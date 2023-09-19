@@ -25,6 +25,7 @@ const Login = ({navigation}) => {
             const token = await AsyncStorage.getItem('JWT_TOKEN');
             if (token !== null) {
                 console.log('Login.js: Found token; Authenticating...');
+                console.log("token: ", token)
                 const authentication = await authenticate(token)
                 
                 if(authentication.success){
