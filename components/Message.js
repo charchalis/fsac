@@ -6,8 +6,6 @@ const Message = React.memo(({message, mine}) => {
     
     const date = new Date(message.date)
 
-    console.log("MESSAGE: ", Object.keys(message))
-
   
     return (
         <View style={[{ padding: 7, borderRadius: 15, margin: 5}, mine ? {alignSelf: 'flex-end', backgroundColor: "#f00"} : {alignSelf: 'flex-start', backgroundColor: "#00f"}]}>

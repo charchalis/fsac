@@ -4,6 +4,9 @@ import React,{useEffect, useState, useRef} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { setOnChatroom } from '../reducers/navigatorOnChatroom';
 
+import {newMessage, isTyping} from '../reducers/friendListReducer'
+
+
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 
@@ -25,13 +28,12 @@ const ChatScreen = ({navigation}) => {
   //const [messages, setMessages] = useState(friend.messages)
   //const [messages, setMessages] = useState([])
 
-  const messages = friend.messages
+  const messages = friend.messages ? friend.messages : []
 
   const [newMessageText, setNewMessageText] = useState('')
   
   const [lastSeenMessageId, setLastSeenMessageId] = useState(-1)
 
-  const [isTyping, setIsTyping] = useState(false)
   const [amTyping, setAmTyping] = useState(false)
   
 
@@ -40,6 +42,8 @@ const ChatScreen = ({navigation}) => {
   const flatListRef = useRef();
 
   const dealWithMessageButton = async () => {
+
+    console.log("dealing with message")
 
     const token = await AsyncStorage.getItem('JWT_TOKEN');
     console.log("-------------------sending message------------------")
@@ -52,15 +56,16 @@ const ChatScreen = ({navigation}) => {
 
     console.log(message)
 
-    //socket.emit("sent private message", {token, message})
+    socket.emit("sent private message", {token, message})
     
     setNewMessageText('')
 
-    dispatch(newMessage({friendId: myUser.id, message: message}))
+    dispatch(newMessage({friendId: friend.id, message: message}))
     console.log(message)
 
   
   } 
+
 
   useEffect(() => {
 
@@ -76,7 +81,12 @@ const ChatScreen = ({navigation}) => {
       //setMessages(messages)
     })
 
-    //socket.on("friend seen", {chatroomId})
+    //TODO:
+    // socket.on("friend seen", ({chatroomId, userId, smallestMessageId, biggestMessageId}) => {
+    //   if(chatroomId !== friend.chatroomId) return 
+    //   console.log("friend seen")
+    //   //setMessages(messages)
+    // })
     
     // add friend image to header
     navigation.setOptions({ 
@@ -104,42 +114,41 @@ const ChatScreen = ({navigation}) => {
   useEffect(() => {
 
     if(!messages) return
-    // if(lastSeenMessageId === messages[messages.length - 1].id) 
 
-    // if(lastSeenMessageId === -1){
+    if(lastSeenMessageId === -1){
 
-    //   const smallestUnseenMessageId = messages.reduce((min, cur) => {
-    //     if(cur.id < min.id && !cur.seen && cur.userId != myUser.id) return cur
-    //     return min
-    //   }, messages[0])
-     
-    //   if(smallestUnseenMessageId) setLastSeenMessageId(smallestUnseenMessageId.id - 1)
-     
-    // }
-    
-    // const biggestUnseenMessageId = messages[messages.length - 1].id
-    // console.log("BPH", biggestUnseenMessageId)
-
-    // console.log("smallest: ", lastSeenMessageId)
-    // console.log("biggest: ", biggestUnseenMessageId)
-    
-    // if(biggestUnseenMessageId > lastSeenMessageId){
- 
-    //   console.log("reporting seen messages")
+      const unseenMessages = messages.filter(
+        msg => !msg.seen && msg.userId !== myUser.id
+      );
       
-    //   //report seen messages
-    //   AsyncStorage.getItem('JWT_TOKEN').then( token => 
-    //     socket.emit("seen new messages", {token, chatroomId: friend.chatroomId, friendId: friend.id, smallestMessageId: lastSeenMessageId, biggestMessageId: biggestUnseenMessageId}))
+      const smallestUnseenMessageId = unseenMessages.length > 0
+        ? unseenMessages.reduce((min, cur) => (cur.id < min.id ? cur : min))
+        : null;
 
-    //   setMessages(messages.map(message => {
-    //     if(message.id > lastSeenMessageId && message.userId != myUser.id)
-    //       message.seen = 1 
-    //     return message
-    //     }))
-    //   console.log("upupupupup", JSON.stringify(messages,null,2))
-    //   setLastSeenMessageId(biggestUnseenMessageId)
+      console.log(messages)
+      console.log("smallest: " + smallestUnseenMessageId)
+     
+      if(smallestUnseenMessageId) setLastSeenMessageId(smallestUnseenMessageId - 1)
+      else return
+     
+    }
+    
+    const biggestUnseenMessageId = messages[messages.length - 1].id
+    console.log("BPH", messages[messages.length - 1])
 
-    // }
+    console.log("smallest: ", lastSeenMessageId)
+    console.log("biggest: ", biggestUnseenMessageId)
+    
+    if(biggestUnseenMessageId > lastSeenMessageId){
+ 
+      console.log("reporting seen messages")
+      
+      //report seen messages
+      AsyncStorage.getItem('JWT_TOKEN').then( token => 
+        socket.emit("seen new messages", {token, chatroomId: friend.chatroomId, friendId: friend.id, smallestMessageId: lastSeenMessageId, biggestMessageId: biggestUnseenMessageId}))
+      setLastSeenMessageId(biggestUnseenMessageId)
+
+    }
 
   }, [messages]);
 
@@ -177,19 +186,14 @@ const ChatScreen = ({navigation}) => {
             {messages ? messages.map((message, index) =>
                 <Message message={message} key={index} mine={myUser.id === message.userId}/>
             ) : null}
-            
-          {friend.typing ? <Text style={{flex: 1, backgroundColor: "#00f"}}>typing</Text> : null}
-          {console.log("FRIEND IS TYPING: ",isTyping)}
-          <Message message={{text: "typing", date: -1}} key={-1} mine={false}/>
-          
-          <View style={{ minHeight: 50, padding: 7, borderRadius: 15, margin: 5, alignSelf: 'flex-start', alignItems: 'center', backgroundColor: "#00f", flexDirection: 'row'}}>
-            <AnimatedDot key={1} delay={0}/>
-            <AnimatedDot key={2} delay={200}/>
-            <AnimatedDot key={3} delay={400}/>
-            
-          </View>
 
-          <Message message={{text: "typing", date: -1}} key={-2} mine={false}/>
+          {friend.typing ?
+            <View style={{ minHeight: 50, padding: 7, borderRadius: 15, margin: 5, alignSelf: 'flex-start', alignItems: 'center', backgroundColor: "#00f", flexDirection: 'row'}}>
+              <AnimatedDot key={1} delay={0}/>
+              <AnimatedDot key={2} delay={200}/>
+              <AnimatedDot key={3} delay={400}/>
+            </View>
+          : null}
 
           </ScrollView>
 
@@ -198,7 +202,7 @@ const ChatScreen = ({navigation}) => {
           <View style={{flexDirection: 'row', backgroundColor: "#555", paddingBottom: 5}}>
             <TextInput  onChangeText={setNewMessageText} value={newMessageText} style={{flex: 1,margin: 4, backgroundColor: "#091212", borderRadius: 25}}/>
             <TouchableOpacity style={{backgroundColor:"#383", justifyContent: 'center', borderRadius: 10, margin: 5, padding: 5}}
-              onPress={() => {dealWithMessageButton(); }}>
+              onPress={() => {dealWithMessageButton() }}>
               <Text style={{fontSize: 25}}>✉️</Text>
             </TouchableOpacity>
           </View>

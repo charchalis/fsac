@@ -17,7 +17,8 @@ const friendListReducer = createSlice({
       
       if (friendIndex !== -1) {
         state.list[friendIndex].endDate = endDate; 
-        state.list[friendIndex].statuss = "sent fsac"; 
+        state.list[friendIndex].statuss = "sent fsac";
+        state.list[friendIndex].messages = []; //this is for when the other client accepts fsac (probably not the best way to do it) 
       } else {
         console.log("Friend not found in the array.");
       }
@@ -29,6 +30,7 @@ const friendListReducer = createSlice({
       
       if (friendIndex !== -1) {
         state.list[friendIndex].statuss = "received fsac"; 
+        state.list[friendIndex].messages = []; //this is for when the other client accepts fsac (probably not the best way to do it) 
       } else {
         console.log("Friend not found in the array.");
       }
@@ -84,6 +86,7 @@ const friendListReducer = createSlice({
       if (friendIndex !== -1) {
         //state.list[friendIndex].endDate = null; 
         state.list[friendIndex].chatroomId = chatroomId; 
+        state.list[friendIndex].messages = []; 
       } else {
         console.log("Friend not found in the array.");
       }
@@ -104,16 +107,16 @@ const friendListReducer = createSlice({
     newMessage: (state, action) => {
       
       console.log("reducer newMessage")
+      console.log(action.payload)
       const friendId = action.payload.friendId;
       const message = action.payload.message;
       console.log("friendId: ", friendId)
       console.log("message: ", message)
       const friendIndex = state.list.findIndex(friend => friend.id === friendId);
-      console.log("reducer newMessage")
       
       if (friendIndex !== -1 ) {
-        console.log("id1: ", state.list[friendIndex].messages.slice(-1)[0].id )
-        console.log("id2: ", message.id)
+        //console.log("id1: ", state.list[friendIndex].messages.slice(-1)[0].id )
+        //console.log("id2: ", message.id)
         //state.list[friendIndex].endDate = null; 
         state.list[friendIndex].messages.push(message); 
       } else {
@@ -128,15 +131,15 @@ const friendListReducer = createSlice({
       
       console.log("reducer isTyping")
       const friendId = action.payload.friendId;
-      const bool = action.payload.bool;
+      const isTyping = action.payload.bool;
       console.log("friendId: ", friendId)
-      console.log("bool: ", bool)
+      console.log("isTyping: ", isTyping)
       const friendIndex = state.list.findIndex(friend => friend.id === friendId);
       
       
       if (friendIndex !== -1) {
         //state.list[friendIndex].endDate = null; 
-        state.list[friendIndex].typing = bool; 
+        state.list[friendIndex].typing = isTyping; 
       } else {
         console.log("Friend not found in the array.");
       }

@@ -211,8 +211,15 @@ const FriendCard = (props) => {
             </View>
 
             <View style={{marginTop: 10}}>
-              {friend.typing ? <Text style={{fontSize: 13, color: '#555' }}>typing...</Text> : 
-              <Text style={{fontSize: 13, color: '#555'}}>{friend.messages[friend.messages.length - 1].text}</Text>}
+              {
+                friend.typing ? <Text style={{fontSize: 13, color: '#555' }}>typing...</Text> : 
+                friend.messages.length > 0 ?  
+                  <Text style={{fontSize: 13, color: '#555'}}>{
+                    //(friend.messages[friend.messages.length - 1].userId === userId ? "You: " : "") + 
+                    friend.messages[friend.messages.length - 1].text 
+                  }</Text> :
+                  <Text style={{fontSize: 13, color: '#555'}}>no messages</Text>
+              }
             </View>
 
           </View>
