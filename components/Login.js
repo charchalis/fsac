@@ -11,7 +11,6 @@ import login from '../logic/login';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../reducers/myUserReducer'
 
-
 const Login = ({navigation}) => {
 
     const [username, setUsername] = useState('');
@@ -19,38 +18,9 @@ const Login = ({navigation}) => {
 
     const dispatch = useDispatch();
 
-    const authentication = async () => {
-
-        try {
-            const token = await AsyncStorage.getItem('JWT_TOKEN');
-            if (token !== null) {
-                console.log('Login.js: Found token; Authenticating...');
-                console.log("token: ", token)
-                const authentication = await authenticate(token)
-                
-                if(authentication.success){
-                    dispatch(setUser(authentication.user))
-                    navigation.navigate('Home');
-
-                }else RNBootSplash.hide({fade: true});
-
-
-            } else {
-                console.log('Token does not exist.');
-                RNBootSplash.hide({fade: true});
-            }
-        }catch (error) {
-            console.log('Error retrieving data: ', error);
-            RNBootSplash.hide({fade: true});
-        }
-    }
-
     useEffect(() =>{
         
-        //AsyncStorage.clear()
-        
-        authentication();
-        
+        RNBootSplash.hide({fade: true});
         
         
     }, []);
@@ -68,7 +38,7 @@ const Login = ({navigation}) => {
             <TextInput value={password} onChangeText={setPassword} placeholder={'password'} secureTextEntry={true}
                 style={{borderWidth: 1, borderColor: "#555", paddingLeft: 10}}/>
             
-            <TouchableOpacity onPress={() => login(username, password).then(res => res.success ? authentication() : res)}
+            <TouchableOpacity onPress={() => login(username, password).then(res => res.success ? navigation.navigate('Home') : res)}
             style={{borderWidth: 1, borderColor: "#555", alignItems: "center", width: 100, marginTop: 10}}>
                 <Text style={{fontSize: 20, color: "#888"}}>login</Text>
             </TouchableOpacity>
