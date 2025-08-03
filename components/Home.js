@@ -20,7 +20,7 @@ import FriendsNavigator from './FriendsNavigator'
 import Fsacs from './Fsacs'
 import Events from './Events'
 import socket from '../logic/socket'
-import { setChatrooms } from '../reducers/chatroomsReducer';
+import { addMessageToChat, setChatrooms } from '../reducers/chatroomsReducer';
 
 
 const activateSocket = (token) =>{
@@ -52,6 +52,7 @@ function Home({navigation}) {
 
     RNBootSplash.hide({fade: true});
 
+    gimmeChatrooms()
     
     socket.on("untrusty socket", () => {
       Alert.alert("JWT token not valid", "you cheeky little bugger. Back to the login page you go", [{
@@ -89,16 +90,13 @@ function Home({navigation}) {
 
     })
 
-    socket.on("received private message", ({userId, message}) => {
+    socket.on("received message", ({message}) => {
       
 
-      console.log("Home.js: socket.emition: receiverd private message from ", userId)
+      console.log("Home.js: socket.emition: receiverd private message from ", message.userId)
       console.log("message: ", message)
 
-      console.log("userid", userId)
-      console.log("message", message)
-
-      dispatch(newMessage({friendId: userId, message: message}))
+      dispatch(addMessageToChat({chatroomId: message.chatroomId, message: message}))
 
       dispatch(addNotification({screen:'friends'}))
 
@@ -129,8 +127,6 @@ function Home({navigation}) {
       console.log("received chatrooms")
       dispatch(setChatrooms(chatrooms))
     })
-
-    gimmeChatrooms()
     
   },[])
 

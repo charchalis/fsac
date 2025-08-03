@@ -81,6 +81,8 @@ const FriendCard = (props) => {
   const { friend, navigation } = props;
   
   const userId = useSelector((state) => state.myUser.user).id
+  
+  const chatroom = useSelector((state) => state.chatrooms.list).find(room => room.id === friend.chatroom_id)
 
   const [image, setImage] = useState(`data:image/jpeg;base64,${friend.image}`);
 
@@ -129,11 +131,11 @@ const FriendCard = (props) => {
           <View style={{marginTop: 10}}>
             {
               friend.typing ? <Text style={{fontSize: 13, color: '#555' }}>typing...</Text> : 
-              //friend.messages.length > 0 ?  
-                //<Text style={{fontSize: 13, color: '#555'}}>{
-                  //(friend.messages[friend.messages.length - 1].userId === userId ? "You: " : "") + 
-                  //friend.messages[friend.messages.length - 1].text 
-                //}</Text> :
+              chatroom && chatroom.messages.length > 0 ?  
+                <Text style={{fontSize: 13, color: '#555'}}>{
+                  (chatroom.messages[chatroom.messages.length - 1].userId === userId ? "You: " : "") + 
+                  chatroom.messages[chatroom.messages.length - 1].text 
+                }</Text> :
                 <Text style={{fontSize: 13, color: '#555'}}>no messages</Text>
             }
           </View>

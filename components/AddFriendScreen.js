@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 
 import { addFriend } from '../reducers/friendListReducer';
+import { addChatroom } from '../reducers/chatroomsReducer';
 
 
 import PossibleFriendCard from './PossibleFriendCard';
@@ -29,9 +30,9 @@ const AddFriendScreen = ({navigation}) => {
         setPossibleFriends(friends)
     })
 
-    socket.on("new friend", (friend) => {
+    socket.on("new friend", ({friend}) => {
         console.log("new friend omg")
-
+        
         const friendId = friend.id
 
         const showToast = () => {
@@ -47,6 +48,7 @@ const AddFriendScreen = ({navigation}) => {
         setPossibleFriends((prevPossibleFriends) => {return prevPossibleFriends.filter((friend => friend.id != friendId))})
 
         dispatch(addFriend(friend))
+        dispatch(addChatroom({id: friend.chatroom_id, messages: []}))
         
     })
 
