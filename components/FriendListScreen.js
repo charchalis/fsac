@@ -30,12 +30,7 @@ const FriendListScreen = ({navigation}) => {
       console.log("FriendListScreen.js: socket.emition: take friend list")
       dispatch(setFriendList(friends))
     })
-
-    socket.on("accepted fsac", ({friendId, chatroomId}) => {
-      dispatch(acceptFsac({friendId,chatroomId}))
-    })
-    
-
+  
     socket.on("fsac invite successful", ({friendId, endDate}) => {
 
       console.log("FriendListScreen.js: socket.emition: fsac invite successfull")
@@ -52,26 +47,10 @@ const FriendListScreen = ({navigation}) => {
       showToast()
 
     })
-
-    socket.on("successful fsac decline", (friendId) => {
-      console.log("FriendListScreen.js: socket.emition: successful decline fsac from ", friendId)
-      dispatch(declineFsac(friendId))
-    })
-    
-    socket.on("successful accept fsac", ({chatroomId, friendId}) => {
-      console.log("FriendListScreen.js: socket.emition: successful accept fsac from ", friendId)
-      dispatch(acceptFsac({chatroomId, friendId}))
-    })
     
     gimmeFriends();
 
   },[])
-  
-  useEffect(() => {
-
-    
-
-  }, [friendList])
 
     return (
       <View style={styles.window}>

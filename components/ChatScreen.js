@@ -14,29 +14,23 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 import Message from './Message'
 import socket from '../logic/socket'
 import AnimatedDot from './AnimatedDot';
+import { addMessageToChat } from '../reducers/chatroomsReducer';
 
 
 const ChatScreen = ({navigation}) => {
   
   const myUser = useSelector(state => state.myUser.user)
-  const friendId = useSelector(state => state.onChatroom.friendId)
-  const friend = useSelector(state => state.friendList.list).find(friend  => friend.id === friendId)
+  const chatroomId = useSelector(state => state.onChatroom.chatroomId)
+  const chatroom = useSelector(state => state.chatrooms.list).find(room => room.id === chatroomId);
+  const friend = useSelector(state => state.friendList.list).find(friend  => friend.chatroom_id === chatroomId)
 
   const dispatch = useDispatch();
-
-  
-  //const [messages, setMessages] = useState(friend.messages)
-  //const [messages, setMessages] = useState([])
-
-  const messages = friend.messages ? friend.messages : []
 
   const [newMessageText, setNewMessageText] = useState('')
   
   const [lastSeenMessageId, setLastSeenMessageId] = useState(-1)
 
   const [amTyping, setAmTyping] = useState(false)
-  
-
   
 
   const flatListRef = useRef();
@@ -52,15 +46,16 @@ const ChatScreen = ({navigation}) => {
     console.log("sender: ", myUser.id)
     console.log("receiver: ", friend.id)
 
-    const message = {text: newMessageText, userId: myUser.id, receiverId: friend.id, chatroomId: friend.chatroomId, seen: false, delivered: false, date: Date.now()}
+    const message = {text: newMessageText, userId: myUser.id, receiverId: friend.id, chatroomId: chatroomId, seen: false, delivered: false, date: Date.now()}
 
     console.log(message)
 
-    socket.emit("sent private message", {token, message})
+    socket.emit("sent message", {token, message})
+
+    dispatch(addMessageToChat({chatroomId, message}))
     
     setNewMessageText('')
 
-    dispatch(newMessage({friendId: friend.id, message: message}))
     console.log(message)
 
   
@@ -69,24 +64,16 @@ const ChatScreen = ({navigation}) => {
 
   useEffect(() => {
 
-    console.log("friend.chatroomId",friend.chatroomId)
-
-    
-    //fetch messages
-    AsyncStorage.getItem('JWT_TOKEN').then( token => 
-      socket.emit('gimme messages', {token, chatroomId: friend.chatroomId}) )
-
-    socket.on("take messages", messages => {
-      console.log("received messages")
-      //setMessages(messages)
-    })
-
     //TODO:
     // socket.on("friend seen", ({chatroomId, userId, smallestMessageId, biggestMessageId}) => {
     //   if(chatroomId !== friend.chatroomId) return 
     //   console.log("friend seen")
     //   //setMessages(messages)
     // })
+
+    socket.on("backend received message successfully", messageId => {
+      console.log("sent message successfully")
+    })
     
     // add friend image to header
     navigation.setOptions({ 
@@ -106,11 +93,12 @@ const ChatScreen = ({navigation}) => {
         
     return () => {
       dispatch(setOnChatroom(false));
-      AsyncStorage.getItem('JWT_TOKEN').then( token => socket.emit("am typing", {token, chatroomId: friend.chatroomId, friendId: friend.id, bool: false}))
+      AsyncStorage.getItem('JWT_TOKEN').then( token => socket.emit("am typing", {token, chatroomId: chatroomId, friendId: friend.id, bool: false}))
     }
 
   }, []);
 
+  /*
   useEffect(() => {
 
     if(!messages) return
@@ -151,6 +139,7 @@ const ChatScreen = ({navigation}) => {
     }
 
   }, [messages]);
+*/
 
   useEffect(() => {
     setAmTyping(newMessageText != '')
@@ -158,22 +147,8 @@ const ChatScreen = ({navigation}) => {
 
   useEffect(() => {
     AsyncStorage.getItem('JWT_TOKEN').then( token => 
-      socket.emit("am typing", {token, chatroomId: friend.chatroomId, friendId: friend.id, bool: amTyping}))
+      socket.emit("am typing", {token, chatroomId: chatroomId, friendId: friend.id, bool: amTyping}))
   }, [amTyping])
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-
 
 
     return (
@@ -183,7 +158,7 @@ const ChatScreen = ({navigation}) => {
           onContentSizeChange={() => flatListRef.current.scrollToEnd()}>
 
           
-            {messages ? messages.map((message, index) =>
+            {chatroom.messages ? chatroom.messages.map((message, index) =>
                 <Message message={message} key={index} mine={myUser.id === message.userId}/>
             ) : null}
 

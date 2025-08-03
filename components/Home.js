@@ -20,6 +20,7 @@ import FriendsNavigator from './FriendsNavigator'
 import Fsacs from './Fsacs'
 import Events from './Events'
 import socket from '../logic/socket'
+import { setChatrooms } from '../reducers/chatroomsReducer';
 
 
 const activateSocket = (token) =>{
@@ -41,6 +42,11 @@ function Home({navigation}) {
   
   const dispatch = useDispatch();
 
+  const gimmeChatrooms = async () => {
+  
+    const token = await AsyncStorage.getItem('JWT_TOKEN');
+    socket.emit("gimme chatrooms", token)
+  }
 
   useEffect(() => {
 
@@ -119,8 +125,12 @@ function Home({navigation}) {
     
     })
 
-    
-    
+    socket.on("take chatrooms", (chatrooms) => {
+      console.log("received chatrooms")
+      dispatch(setChatrooms(chatrooms))
+    })
+
+    gimmeChatrooms()
     
   },[])
 
@@ -128,9 +138,11 @@ function Home({navigation}) {
   
   useEffect(() => {
     if(onChatroom){
+      console.log("navigating to chatscreen")
       navigation.navigate('ChatScreen')
     }
   }, [onChatroom]);
+
 
   
   
