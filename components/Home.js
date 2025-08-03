@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { Text, View, TouchableOpacity, Alert } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import { faEye, faPerson, faHouse, faGear } from "@fortawesome/free-solid-svg-icons";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -7,29 +8,25 @@ import RNBootSplash from "react-native-bootsplash";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
+
+import { receiveFsac, newMessage, isTyping, acceptFsac } from '../reducers/friendListReducer';
+import { addNotification} from '../reducers/tabNavigationReducer';
+
+
+
 import AnimatedRingExample from './AnimatedRingExample'
 import Settings from './Settings'
-import Friends from './Friends'
+import FriendsNavigator from './FriendsNavigator'
 import Fsacs from './Fsacs'
 import Events from './Events'
-
-import io from 'socket.io-client';
-import {API_URL} from '../constants';
-
-import socket from '../logic/socket';
-
+import socket from '../logic/socket'
+import { addMessageToChat, setChatrooms } from '../reducers/chatroomsReducer';
 
 
 const activateSocket = (token) =>{
-    
-  socket.on("papers please", async () => {
-
-    console.log("papers")
   
-    console.log("token: ", token)
-    socket.emit("authenticate client socket", token)
-      
-  })
+  console.log("activating socket")
+  
 }
 
 
@@ -41,11 +38,21 @@ function Home({navigation}) {
 
   const [isFsacoso, setFsacoso] = useState(false);
 
+  const notifications = useSelector(state => state.tabNavigation.notifications)
+  
+  const dispatch = useDispatch();
+
+  const gimmeChatrooms = async () => {
+  
+    const token = await AsyncStorage.getItem('JWT_TOKEN');
+    socket.emit("gimme chatrooms", token)
+  }
+
   useEffect(() => {
+
     RNBootSplash.hide({fade: true});
-    
-    console.log(socket)
-    
+
+    gimmeChatrooms()
     
     socket.on("untrusty socket", () => {
       Alert.alert("JWT token not valid", "you cheeky little bugger. Back to the login page you go", [{
@@ -55,14 +62,86 @@ function Home({navigation}) {
 
     })
 
-    const getToken = async () => await AsyncStorage.getItem('JWT_TOKEN');
-    getToken().then((token) => activateSocket(token))
 
+    socket.on("papers please", async () => {
+
+      console.log("Home.js: socket emition: papers please")
     
+      const getToken = async () => await AsyncStorage.getItem('JWT_TOKEN');
+
+      const token = await getToken()
+
+      socket.emit("authenticate client socket", token)
+        
+    })
     
+    socket.on("received fsac", (userId) => {
+      
+      console.log("Home.js: socket.emition: received fsac from ", userId)
+
+      dispatch(addNotification({screen:'friends'}))
+
+      //Alert.alert(userId, "wants to fsac", [{
+        //text: "hurray",
+        //onPress: () => null
+      //}])
+      
+      dispatch(receiveFsac({friendId: userId}))
+
+    })
+
+    socket.on("received message", ({message}) => {
+      
+
+      console.log("Home.js: socket.emition: receiverd private message from ", message.userId)
+      console.log("message: ", message)
+
+      dispatch(addMessageToChat({chatroomId: message.chatroomId, message: message}))
+
+      dispatch(addNotification({screen:'friends'}))
+
+    })
+
+    socket.on("accepted fsac", ({friendId, chatroomId}) => {
+      
+
+      console.log("Home.js: socket.emition: accepted fsac with ", friendId)
+      
+      dispatch(acceptFsac({friendId: userId, message: message}))
+      dispatch(addNotification({screen:'friends'}))
+      
+    })
+
+    socket.on("is typing", ({friendId, chatroomId, bool}) => {
+      
+      //TODO: logic for when its a group chat
+
+      console.log(friendId, " is typing in ", chatroomId, ": ", bool)
+
+      dispatch(isTyping({friendId, bool}))
+      console.log("is typing over")
     
+    })
+
+    socket.on("take chatrooms", (chatrooms) => {
+      console.log("received chatrooms")
+      dispatch(setChatrooms(chatrooms))
+    })
     
-  }, []);
+  },[])
+
+  const onChatroom = useSelector(state => state.onChatroom.onChatroom)
+  
+  useEffect(() => {
+    if(onChatroom){
+      console.log("navigating to chatscreen")
+      navigation.navigate('ChatScreen')
+    }
+  }, [onChatroom]);
+
+
+  
+  
 
 
   return (
@@ -71,11 +150,12 @@ function Home({navigation}) {
     screenOptions={{
       tabBarStyle: {
         
-        margin: "2%",
-        
-        paddingBottom: "5%",
+        alignItems: 'center',
+        justifyContent: 'center',
+
+        margin: 2,
         borderRadius: 15,
-        height: "10%",
+        height: 100,
         backgroundColor: "#091212",
         borderWidth: 2,
         borderTopWidth: 2,
@@ -88,22 +168,25 @@ function Home({navigation}) {
 
 
 
-      <Tab.Screen name="events"
-      component={Events}
+      
+
+      <Tab.Screen name="friends" component={FriendsNavigator}
       options={{
+        tabBarBadge: notifications.friends , 
         headerShown: false,
         tabBarIcon: ({focused, color, size}) =>
-          <FontAwesomeIcon icon={faHouse} color={color} size={size}/>
-      }} />
+          <FontAwesomeIcon icon={faPerson} color={color} size={size} />
+      }}/>
 
 
 
       <Tab.Screen name="fsacs"
         component={Fsacs}
         options={{
+          tabBarBadge: notifications.fsacs, 
           headerShown: false,
           tabBarIcon: ({focused, color, size}) =>
-          <FontAwesomeIcon icon={faEye} color={color} size={size}/>
+          <FontAwesomeIcon icon={faEye} color={color} size={size} />
       }}/>
 
 
@@ -117,17 +200,20 @@ function Home({navigation}) {
 
 
 
-      <Tab.Screen name="friends" component={Friends}
+      <Tab.Screen name="events"
+      component={Events}
       options={{
-        headerShown: false,
+        tabBarBadge: notifications.events, 
+        headerShown: false, 
         tabBarIcon: ({focused, color, size}) =>
-          <FontAwesomeIcon icon={faPerson} color={color} size={size} />
-      }}/>
+          <FontAwesomeIcon icon={faHouse} color={color} size={size}/>
+      }} />
 
 
 
       <Tab.Screen name="settings" component={Settings}
       options={{
+        tabBarBadge: notifications.settings, 
         headerShown: false,
         tabBarIcon: ({focused, color, size}) =>
           <FontAwesomeIcon icon={faGear} color={color} size={size}/>
@@ -141,14 +227,14 @@ function Home({navigation}) {
 }
 
 const FsacButton = (props) =>
-      <View style={{borderRadius: 30, borderColor: "#56b643", borderWidth: 2, top: "2%", backgroundColor: "#091212", width: 60, height: 60}}>
+      <View style={{alignSelf: 'center', borderRadius: 30, borderColor: "#56b643", borderWidth: 2, backgroundColor: "#fff", width: 60, height: 60}}>
     {/*
       <View style={{borderRadius: 25, borderColor: "#56b643", borderWidth: 2, top: "-3%", backgroundColor: "#091212", width: 50, height: 50}}>
       <View style={{borderRadius: 50, borderColor: "#56b643", borderWidth: 2, top: "-14%", backgroundColor: "#091212", width: 100, height: 100}}>
     */}
         <TouchableOpacity 
-        style={{padding: 10, flex: 1, flexDirection: "column",  justifyContent: "center", alignItems: "center", padding: "6%", borderRadius: 100, borderWidth: 2, backgroundColor: "#56b643"}}
-        onPress={()=> {props.setFsacoso(!props.isFsacoso)}}>    
+        style={{flex: 1, flexDirection: "column",  justifyContent: "center", alignItems: "center", padding: "6%", borderRadius: 100, borderWidth: 2, backgroundColor: "#56b643"}}
+        onPress={()=> {props.setFsacoso(!props.isFsacoso)}}  >    
           {              
             props.isFsacoso ? 
             <AnimatedRingExample/>

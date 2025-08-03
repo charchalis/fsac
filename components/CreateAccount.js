@@ -76,6 +76,8 @@ const CreateAccount =  ({navigation}) => {
               skipBackup: true,
               path: 'images',
             },
+            maxWidth: 500,
+            maxHeight: 500,
         };
 
         await launchImageLibrary(options, (response) => {
