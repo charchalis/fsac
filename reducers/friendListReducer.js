@@ -29,6 +29,7 @@ const friendListReducer = createSlice({
       const friendIndex = state.list.findIndex(friend => friend.id === friendId);
       
       if (friendIndex !== -1) {
+        state.list[friendIndex].fsacoso = true
         state.list[friendIndex].statuss = "received fsac"; 
         state.list[friendIndex].messages = []; //this is for when the other client accepts fsac (probably not the best way to do it) 
       } else {
@@ -149,8 +150,25 @@ const friendListReducer = createSlice({
 
     },
 
+    notFsacosoAnymore: (state, action) => {
+      const friendId = action.payload;
+      const friendIndex = state.list.findIndex(friend => friend.id === friendId);
+      
+      
+      if (friendIndex !== -1) {
+        //state.list[friendIndex].endDate = null; 
+        state.list[friendIndex].fsacoso = false; 
+      } else {
+        console.log("Friend not found in the array.");
+      }
+      
+
+    },
+
+
+
   },
 });
 
-export const { log, setFriendList, addFriend, fsac, receiveFsac, declineFsac, acceptFsac, newMessage, isTyping, getFriend } = friendListReducer.actions;
+export const { log, setFriendList, addFriend, fsac, receiveFsac, declineFsac, acceptFsac, newMessage, isTyping, getFriend, notFsacosoAnymore} = friendListReducer.actions;
 export default friendListReducer.reducer;

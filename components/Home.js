@@ -12,7 +12,7 @@ import { setUser } from '../reducers/myUserReducer'
 
 
 
-import { receiveFsac, newMessage, isTyping, acceptFsac } from '../reducers/friendListReducer';
+import { receiveFsac, newMessage, isTyping, acceptFsac, notFsacosoAnymore } from '../reducers/friendListReducer';
 import { addNotification} from '../reducers/tabNavigationReducer';
 
 
@@ -41,7 +41,35 @@ function Home({navigation}) {
 
   const [isFsacoso, setFsacoso] = useState(false);
 
+  const userId = useSelector((state) => state.myUser.user).id
+
   const notifications = useSelector(state => state.tabNavigation.notifications)
+
+  const fsacFriendList = useSelector((state) => state.friendList.list) //TODO: right now all friends get notified.
+                                                                    //should be just the ones defined in the settings
+
+  const FsacButton = (props) =>
+      <View style={{alignSelf: 'center', borderRadius: 30, borderColor: "#56b643", borderWidth: 2, backgroundColor: "#fff", width: 60, height: 60}}>
+    {/*
+      <View style={{borderRadius: 25, borderColor: "#56b643", borderWidth: 2, top: "-3%", backgroundColor: "#091212", width: 50, height: 50}}>
+      <View style={{borderRadius: 50, borderColor: "#56b643", borderWidth: 2, top: "-14%", backgroundColor: "#091212", width: 100, height: 100}}>
+    */}
+        <TouchableOpacity 
+        style={{flex: 1, flexDirection: "column",  justifyContent: "center", alignItems: "center", padding: "6%", borderRadius: 100, borderWidth: 2, backgroundColor: "#56b643"}}
+        onPress={async ()=> {
+          props.setFsacoso(!props.isFsacoso);
+          const token = await AsyncStorage.getItem('JWT_TOKEN');
+          !props.isFsacoso ? fsacFriendList.forEach(friend => socket.emit("fsac?", ({token, userId, friendId: friend.id})))
+          : socket.emit("not fsacoso anymore", {token})
+        }}>    
+          {              
+            props.isFsacoso ? 
+            <AnimatedRingExample/>
+            :
+            <Text style={{fontSize: 20, color:"#091212", fontWeight: "600", fontStyle: "italic"}}>fsac</Text>     
+          }       
+        </TouchableOpacity> 
+    </View> 
   
   const dispatch = useDispatch();
 
@@ -79,7 +107,7 @@ function Home({navigation}) {
   useEffect(() => {
 
     //AsyncStorage.clear()
-    console.log("\n\n\n\n\nauthenticating")
+    
     authentication()
 
     gimmeChatrooms()
@@ -156,6 +184,13 @@ function Home({navigation}) {
     socket.on("take chatrooms", (chatrooms) => {
       console.log("received chatrooms")
       dispatch(setChatrooms(chatrooms))
+    })
+
+    socket.on("friend not fsacoso anymore", (friend) => {
+      const friendId = friend.friendId
+      console.log("friend not fsacoso anymore: " + friendId)
+      console.log(friendId)
+      dispatch(notFsacosoAnymore(friendId))
     })
     
   },[])
@@ -256,22 +291,7 @@ function Home({navigation}) {
   );
 }
 
-const FsacButton = (props) =>
-      <View style={{alignSelf: 'center', borderRadius: 30, borderColor: "#56b643", borderWidth: 2, backgroundColor: "#fff", width: 60, height: 60}}>
-    {/*
-      <View style={{borderRadius: 25, borderColor: "#56b643", borderWidth: 2, top: "-3%", backgroundColor: "#091212", width: 50, height: 50}}>
-      <View style={{borderRadius: 50, borderColor: "#56b643", borderWidth: 2, top: "-14%", backgroundColor: "#091212", width: 100, height: 100}}>
-    */}
-        <TouchableOpacity 
-        style={{flex: 1, flexDirection: "column",  justifyContent: "center", alignItems: "center", padding: "6%", borderRadius: 100, borderWidth: 2, backgroundColor: "#56b643"}}
-        onPress={()=> {props.setFsacoso(!props.isFsacoso)}}  >    
-          {              
-            props.isFsacoso ? 
-            <AnimatedRingExample/>
-            :
-            <Text style={{fontSize: 20, color:"#091212", fontWeight: "600", fontStyle: "italic"}}>fsac</Text>     
-          }       
-        </TouchableOpacity> 
-    </View> 
+
+
 
 export default Home;
