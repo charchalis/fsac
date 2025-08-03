@@ -7,6 +7,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import RNBootSplash from "react-native-bootsplash";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import authenticate from '../logic/authenticate';
+import { setUser } from '../reducers/myUserReducer'
+
 
 
 import { receiveFsac, newMessage, isTyping, acceptFsac } from '../reducers/friendListReducer';
@@ -48,9 +51,36 @@ function Home({navigation}) {
     socket.emit("gimme chatrooms", token)
   }
 
+  const authentication = async () => {
+
+    try {
+        const token = await AsyncStorage.getItem('JWT_TOKEN');
+        if (token !== null) {
+            console.log('Login.js: Found token; Authenticating...');
+            console.log("token: ", token)
+            const authentication = await authenticate(token)
+            
+            if(authentication.success){
+              dispatch(setUser(authentication.user))
+              RNBootSplash.hide({fade: true});
+            }else navigation.navigate('Login');
+
+
+        } else {
+            console.log('Token does not exist.');
+            navigation.navigate('Login');
+        }
+    }catch (error) {
+        console.log('Error retrieving data: ', error);
+        navigation.navigate('Login');
+    }
+  }
+
   useEffect(() => {
 
-    RNBootSplash.hide({fade: true});
+    //AsyncStorage.clear()
+    console.log("\n\n\n\n\nauthenticating")
+    authentication()
 
     gimmeChatrooms()
     
