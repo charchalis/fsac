@@ -164,9 +164,9 @@ const ChatScreen = ({navigation}) => {
 
           {friend.typing ?
             <View style={{ minHeight: 50, padding: 7, borderRadius: 15, margin: 5, alignSelf: 'flex-start', alignItems: 'center', backgroundColor: "#00f", flexDirection: 'row'}}>
-              <AnimatedDot key={1} delay={0}    color='white'/>
-              <AnimatedDot key={2} delay={200}  color='white'/>
-              <AnimatedDot key={3} delay={400}  color='white'/>
+              <AnimatedDot key={1} delay={100}    color='white'/>
+              <AnimatedDot key={2} delay={300}  color='white'/>
+              <AnimatedDot key={3} delay={500}  color='white'/>
             </View>
           : null}
 
