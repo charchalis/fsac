@@ -22,7 +22,7 @@ const AnimatedDot = (props) => {
                 Animated.timing(animatedValue, {
                     ...animationConfig,
                     toValue: 0, // Go up
-                    duration: 300,
+                    duration: 200,
                     
                 }),
                 Animated.timing(animatedValue, {

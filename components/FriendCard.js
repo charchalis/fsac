@@ -136,9 +136,9 @@ const FriendCard = (props) => {
               friend.typing ?
               // <Text style={{fontSize: 13, color: '#555' }}>typing...</Text>
               <View style={{flexDirection: 'row'}}>
-                <AnimatedDot key={1} delay={0}   color = '#555'/>
-                <AnimatedDot key={2} delay={200} color = '#555'/>
-                <AnimatedDot key={3} delay={400} color = '#555'/>
+                <AnimatedDot key={1} delay={1}   color = '#555'/>
+                <AnimatedDot key={2} delay={201} color = '#555'/>
+                <AnimatedDot key={3} delay={401} color = '#555'/>
               </View>
               : 
               chatroom && chatroom.messages.length > 0 ?  
