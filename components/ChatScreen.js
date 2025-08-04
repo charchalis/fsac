@@ -13,8 +13,8 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 import Message from './Message'
 import socket from '../logic/socket'
-import AnimatedDot from './AnimatedDot';
 import { addMessageToChat } from '../reducers/chatroomsReducer';
+import BouncingDots from './BouncingDots';
 
 
 const ChatScreen = ({navigation}) => {
@@ -163,10 +163,8 @@ const ChatScreen = ({navigation}) => {
             ) : null}
 
           {friend.typing ?
-            <View style={{ minHeight: 50, padding: 7, borderRadius: 15, margin: 5, alignSelf: 'flex-start', alignItems: 'center', backgroundColor: "#00f", flexDirection: 'row'}}>
-              <AnimatedDot key={1} delay={0}    color='white'/>
-              <AnimatedDot key={2} delay={200}  color='white'/>
-              <AnimatedDot key={3} delay={400}  color='white'/>
+            <View style={{ minHeight: 40, padding: 7, paddingTop: 3, paddingBottom: 3, borderRadius: 15, margin: 5, alignSelf: 'flex-start', alignItems: 'center', backgroundColor: "#00f", flexDirection: 'row'}}>
+              <BouncingDots color={'#fff'}/>
             </View>
           : null}
 
