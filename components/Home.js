@@ -10,7 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import authenticate from '../logic/authenticate';
 import { setUser } from '../reducers/myUserReducer'
 
-
+import { showPersistentNotification, cancelPersistentNotification } from '../utils/notificationService';
 
 import { receiveFsac, setFriendList, isTyping, acceptFsac, notFsacosoAnymore } from '../reducers/friendListReducer';
 import { addNotification} from '../reducers/tabNavigationReducer';
@@ -59,8 +59,13 @@ function Home({navigation}) {
         onPress={async ()=> {
           props.setFsacoso(!props.isFsacoso);
           const token = await AsyncStorage.getItem('JWT_TOKEN');
-          !props.isFsacoso ? fsacFriendList.forEach(friend => socket.emit("fsac?", ({token, userId, friendId: friend.id})))
-          : socket.emit("not fsacoso anymore", {token})
+          if(!props.isFsacoso){
+            fsacFriendList.forEach(friend => socket.emit("fsac?", ({token, userId, friendId: friend.id})))
+            showPersistentNotification()
+          }else{
+            socket.emit("not fsacoso anymore", {token})
+            cancelPersistentNotification()
+          }
         }}>    
           {              
             props.isFsacoso ? 
