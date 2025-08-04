@@ -7,7 +7,7 @@ import socket from '../logic/socket'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-import AnimatedDot from './AnimatedDot';
+import BouncingDots from './BouncingDots';
 
 
 
@@ -135,10 +135,8 @@ const FriendCard = (props) => {
             {
               friend.typing ?
               // <Text style={{fontSize: 13, color: '#555' }}>typing...</Text>
-              <View style={{flexDirection: 'row'}}>
-                <AnimatedDot key={1} delay={1}   color = '#555'/>
-                <AnimatedDot key={2} delay={201} color = '#555'/>
-                <AnimatedDot key={3} delay={401} color = '#555'/>
+              <View style={{flexDirection: 'row', marginTop: 5}}>
+                <BouncingDots color={'#555'}/>
               </View>
               : 
               chatroom && chatroom.messages.length > 0 ?  
