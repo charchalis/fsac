@@ -12,7 +12,7 @@ import { setUser } from '../reducers/myUserReducer'
 
 
 
-import { receiveFsac, newMessage, isTyping, acceptFsac, notFsacosoAnymore } from '../reducers/friendListReducer';
+import { receiveFsac, setFriendList, isTyping, acceptFsac, notFsacosoAnymore } from '../reducers/friendListReducer';
 import { addNotification} from '../reducers/tabNavigationReducer';
 
 
@@ -20,7 +20,7 @@ import { addNotification} from '../reducers/tabNavigationReducer';
 import AnimatedRingExample from './AnimatedRingExample'
 import Settings from './Settings'
 import FriendsNavigator from './FriendsNavigator'
-import Fsacs from './Fsacs'
+import FsacsScreen from './FsacsScreen'
 import Events from './Events'
 import socket from '../logic/socket'
 import { addMessageToChat, setChatrooms } from '../reducers/chatroomsReducer';
@@ -79,6 +79,12 @@ function Home({navigation}) {
     socket.emit("gimme chatrooms", token)
   }
 
+  const gimmeFriends = async () => {
+  
+    const token = await AsyncStorage.getItem('JWT_TOKEN');
+    socket.emit("gimme friends", token)
+  }
+
   const authentication = async () => {
 
     try {
@@ -110,6 +116,7 @@ function Home({navigation}) {
     
     authentication()
 
+    gimmeFriends();
     gimmeChatrooms()
     
     socket.on("untrusty socket", () => {
@@ -131,6 +138,11 @@ function Home({navigation}) {
 
       socket.emit("authenticate client socket", token)
         
+    })
+
+    socket.on("take friend list", (friends) => {
+      console.log("FriendListScreen.js: socket.emition: take friend list")
+      dispatch(setFriendList(friends))
     })
     
     socket.on("received fsac", (userId) => {
@@ -214,25 +226,43 @@ function Home({navigation}) {
     <Tab.Navigator
     screenOptions={{
       tabBarStyle: {
-        
-        alignItems: 'center',
-        justifyContent: 'center',
-
+  
         margin: 2,
-        borderRadius: 15,
-        height: 100,
+        height: 80,
         backgroundColor: "#091212",
+        borderRadius: 15,
         borderWidth: 2,
         borderTopWidth: 2,
         borderColor: "#56b643",
         borderTopColor: "#56b643"
         //,position: "absolute"
       },
+
+      tabBarLabelStyle: {
+        fontSize: 12,
+        textAlign: 'center',
+        marginBottom: 10,
+      },
+
+      tabBarIconStyle: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 5,
+      },
+
       tabBarActiveTintColor: '#56b643',
+
     }}>
 
 
-
+      <Tab.Screen name="fsacs"
+        component={FsacsScreen}
+        options={{
+          tabBarBadge: notifications.fsacs, 
+          headerShown: false,
+          tabBarIcon: ({focused, color, size}) =>
+          <FontAwesomeIcon icon={faEye} color={color} size={size} />
+      }}/>
       
 
       <Tab.Screen name="friends" component={FriendsNavigator}
@@ -242,18 +272,6 @@ function Home({navigation}) {
         tabBarIcon: ({focused, color, size}) =>
           <FontAwesomeIcon icon={faPerson} color={color} size={size} />
       }}/>
-
-
-
-      <Tab.Screen name="fsacs"
-        component={Fsacs}
-        options={{
-          tabBarBadge: notifications.fsacs, 
-          headerShown: false,
-          tabBarIcon: ({focused, color, size}) =>
-          <FontAwesomeIcon icon={faEye} color={color} size={size} />
-      }}/>
-
 
 
       <Tab.Screen name="FSAC" component={"does not matter"} 

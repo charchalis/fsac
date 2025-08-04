@@ -9,11 +9,7 @@ import FriendCard from './FriendCard';
 
 
 
-const gimmeFriends = async () => {
-  
-  const token = await AsyncStorage.getItem('JWT_TOKEN');
-  socket.emit("gimme friends", token)
-}
+
 
 
 const FriendListScreen = ({navigation}) => {
@@ -24,12 +20,6 @@ const FriendListScreen = ({navigation}) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-
-    
-    socket.on("take friend list", (friends) => {
-      console.log("FriendListScreen.js: socket.emition: take friend list")
-      dispatch(setFriendList(friends))
-    })
   
     socket.on("fsac invite successful", ({friendId, endDate}) => {
 
@@ -48,7 +38,6 @@ const FriendListScreen = ({navigation}) => {
 
     })
     
-    gimmeFriends();
 
   },[])
 
