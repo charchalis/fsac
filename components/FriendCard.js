@@ -7,6 +7,9 @@ import socket from '../logic/socket'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
+import AnimatedDot from './AnimatedDot';
+
+
 
 const showTime = (expireDate) => {
   const currentDate = Date.now()
@@ -128,9 +131,16 @@ const FriendCard = (props) => {
             <Text style={{fontSize: 13, marginLeft: 10, alignSelf: 'center'}}>{friend.firstName + " " + friend.lastName}</Text>
           </View>
 
-          <View style={{marginTop: 10}}>
+          <View style={{marginTop: 10, minHeight: 20}}>
             {
-              friend.typing ? <Text style={{fontSize: 13, color: '#555' }}>typing...</Text> : 
+              friend.typing ?
+              // <Text style={{fontSize: 13, color: '#555' }}>typing...</Text>
+              <View style={{flexDirection: 'row'}}>
+                <AnimatedDot key={1} delay={0}   color = '#555'/>
+                <AnimatedDot key={2} delay={200} color = '#555'/>
+                <AnimatedDot key={3} delay={400} color = '#555'/>
+              </View>
+              : 
               chatroom && chatroom.messages.length > 0 ?  
                 <Text style={{fontSize: 13, color: '#555'}}>{
                   (chatroom.messages[chatroom.messages.length - 1].userId === userId ? "You: " : "") + 
