@@ -11,14 +11,24 @@ export async function showPersistentNotification() {
   });
 
   await notifee.displayNotification({
+    id: 'persistent-fsacoso', // 👈 fixed ID prevents duplicates
     title: 'You are Fsacoso',
-    body: 'To turn this off, stop being fsacoso, duuh',
+    body: 'Your friends can see your fsacosity',
     android: {
       channelId,
       smallIcon: 'ic_launcher', // Must exist in res/drawable
       ongoing: true,
       autoCancel: false,
       pressAction: { id: 'default' },
+      actions: [
+        {
+            title: 'Stop being fsacoso',
+            pressAction: {
+                id: 'deactivate-button', // custom ID you'll handle
+                launchActivity: 'default',
+            },
+        },
+        ],
     },
   });
 }
