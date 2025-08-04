@@ -25,7 +25,7 @@ export async function showPersistentNotification() {
             title: 'Stop being fsacoso',
             pressAction: {
                 id: 'deactivate-button', // custom ID you'll handle
-                launchActivity: 'default',
+                //launchActivity: 'default',
             },
         },
         ],
