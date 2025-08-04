@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native'
+import {View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator} from 'react-native'
 import {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
 import { setChatFriend, setOnChatroom } from '../reducers/navigatorOnChatroom';
@@ -17,7 +17,10 @@ const PossibleFriendCard = (props) => {
 
   const buttonStr = "add friend";
 
+  const [buttonIsLoading, setButtonIsLoading] = useState(false)
+
   const buttonFunction = async () => {
+    setButtonIsLoading(true)
     const token = await AsyncStorage.getItem('JWT_TOKEN');
     socket.emit('add friend', {token, friend: friend})
   }
@@ -31,11 +34,16 @@ const PossibleFriendCard = (props) => {
           <Text style={{fontSize: 13}}>{friend.firstName + " " + friend.lastName}</Text>
         </View>
       </View>
-
-      <TouchableOpacity class="friendFsacButton" style={[styles.button, {backgroundColor: buttonColor}]}
-        onPress={buttonFunction}>
-        <Text>{buttonStr}</Text>
-      </TouchableOpacity>
+      <View style={{alignItems: 'flex-end', justifyContent: 'center'}}>
+      { buttonIsLoading ? 
+        <ActivityIndicator size="large" color="#56b643" style={{alignItems: 'center', justifyContent: 'center', marginRight: 20}} />
+        :
+        <TouchableOpacity class="friendFsacButton" style={[styles.button, {backgroundColor: buttonColor}]}
+          onPress={buttonFunction}>
+          <Text>{buttonStr}</Text>
+        </TouchableOpacity>
+      }
+      </View>
     </View>
   )
 }
