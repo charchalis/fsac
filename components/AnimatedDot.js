@@ -53,7 +53,7 @@ const AnimatedDot = (props) => {
           height: 10,
           borderRadius: 10,
           margin: 2,
-          backgroundColor: 'white', // Dot's color
+          backgroundColor: props.color, // Dot's color
           transform: [{ translateY }], // Apply vertical translation
         }}
         />)
