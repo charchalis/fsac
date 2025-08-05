@@ -8,7 +8,7 @@ import {newMessage, isTyping} from '../reducers/friendListReducer'
 
 
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 
 import Message from './Message'
@@ -98,49 +98,7 @@ const ChatScreen = ({navigation}) => {
 
   }, []);
 
-  /*
-  useEffect(() => {
-
-    if(!messages) return
-
-    if(lastSeenMessageId === -1){
-
-      const unseenMessages = messages.filter(
-        msg => !msg.seen && msg.userId !== myUser.id
-      );
-      
-      const smallestUnseenMessageId = unseenMessages.length > 0
-        ? unseenMessages.reduce((min, cur) => (cur.id < min.id ? cur : min))
-        : null;
-
-      console.log(messages)
-      console.log("smallest: " + smallestUnseenMessageId)
-     
-      if(smallestUnseenMessageId) setLastSeenMessageId(smallestUnseenMessageId - 1)
-      else return
-     
-    }
-    
-    const biggestUnseenMessageId = messages[messages.length - 1].id
-    console.log("BPH", messages[messages.length - 1])
-
-    console.log("smallest: ", lastSeenMessageId)
-    console.log("biggest: ", biggestUnseenMessageId)
-    
-    if(biggestUnseenMessageId > lastSeenMessageId){
- 
-      console.log("reporting seen messages")
-      
-      //report seen messages
-      AsyncStorage.getItem('JWT_TOKEN').then( token => 
-        socket.emit("seen new messages", {token, chatroomId: friend.chatroomId, friendId: friend.id, smallestMessageId: lastSeenMessageId, biggestMessageId: biggestUnseenMessageId}))
-      setLastSeenMessageId(biggestUnseenMessageId)
-
-    }
-
-  }, [messages]);
-*/
-
+  
   useEffect(() => {
     setAmTyping(newMessageText != '')
   }, [newMessageText])
@@ -172,11 +130,11 @@ const ChatScreen = ({navigation}) => {
 
           
 
-          <View style={{flexDirection: 'row', backgroundColor: "#555", paddingBottom: 5}}>
+          <View style={{flexDirection: 'row', backgroundColor: "#555"}}>
             <TextInput  onChangeText={setNewMessageText} value={newMessageText} style={{flex: 1,margin: 4, backgroundColor: "#091212", borderRadius: 25}}/>
-            <TouchableOpacity style={{backgroundColor:"#383", justifyContent: 'center', borderRadius: 10, margin: 5, padding: 5}}
+            <TouchableOpacity style={{backgroundColor:"#383", justifyContent: 'center', alignItems: 'center', borderRadius: 10, margin: 5, padding: 10}}
               onPress={() => {dealWithMessageButton() }}>
-              <Text style={{fontSize: 25}}>✉️</Text>
+              <FontAwesomeIcon icon={faEnvelope} color={'#ffffffaa'} size={25} style={{}} />
             </TouchableOpacity>
           </View>
         </View>
