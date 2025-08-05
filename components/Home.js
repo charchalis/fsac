@@ -169,7 +169,7 @@ function Home({navigation}) {
       
       console.log("Home.js: socket.emition: received fsac from ", userId)
 
-      dispatch(addNotification({screen:'friends'}))
+      dispatch(addNotification({screen:'fsacs'}))
 
       //Alert.alert(userId, "wants to fsac", [{
         //text: "hurray",
@@ -203,7 +203,7 @@ function Home({navigation}) {
       console.log("Home.js: socket.emition: accepted fsac with ", friendId)
       
       dispatch(acceptFsac({friendId: userId, message: message}))
-      dispatch(addNotification({screen:'friends'}))
+      dispatch(addNotification({screen:'fsacs'}))
       
     })
 
