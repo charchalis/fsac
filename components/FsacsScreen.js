@@ -4,12 +4,24 @@ import {View, Text, StyleSheet, ScrollView, TouchableOpacity, ToastAndroid} from
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import { faJoint } from "@fortawesome/free-solid-svg-icons";
 import FriendCard from './FriendCard';
+import { useIsFocused } from '@react-navigation/native';
+import {setScreen} from '../reducers/tabNavigationReducer';
+
+
 
 
 
 const FsacsScreen = ({navigation}) => {
 
   const dispatch = useDispatch()
+  
+  const focused = useIsFocused();
+
+  useEffect(() => {
+    
+    if(focused)dispatch(setScreen('fsacs'))
+
+  }, [focused]) 
   
   const events = []
   const individualFsacs = useSelector((state) => state.friendList.list).filter(friend => friend.fsacoso)

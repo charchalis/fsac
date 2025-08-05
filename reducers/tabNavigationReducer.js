@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const tabNavigation = createSlice({
   name: 'tabNavigation',
   initialState: {
-    screen: 'friends',
+    screen: 'fsacs',
     notifications: {friends: null, fsacs: null, events: null, settings: null}
   },
   reducers: {

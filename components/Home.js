@@ -10,7 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import authenticate from '../logic/authenticate';
 import { setUser } from '../reducers/myUserReducer'
 
-
+import { showPersistentNotification, cancelPersistentNotification } from '../utils/notificationService';
 
 import { receiveFsac, setFriendList, isTyping, acceptFsac, notFsacosoAnymore } from '../reducers/friendListReducer';
 import { addNotification} from '../reducers/tabNavigationReducer';
@@ -48,6 +48,23 @@ function Home({navigation}) {
   const fsacFriendList = useSelector((state) => state.friendList.list) //TODO: right now all friends get notified.
                                                                     //should be just the ones defined in the settings
 
+  const toggleFsacoso = async (nextState) => {
+    const newState = nextState ?? !isFsacoso;
+    setFsacoso(newState);
+  
+    const token = await AsyncStorage.getItem('JWT_TOKEN');
+  
+    if (newState) {
+      fsacFriendList.forEach(friend =>
+        socket.emit('fsac?', { token, userId, friendId: friend.id })
+      );
+      showPersistentNotification();
+    } else {
+      socket.emit('not fsacoso anymore', { token });
+      cancelPersistentNotification();
+    }
+  };
+
   const FsacButton = (props) =>
       <View style={{alignSelf: 'center', borderRadius: 30, borderColor: "#56b643", borderWidth: 2, backgroundColor: "#fff", width: 60, height: 60}}>
     {/*
@@ -56,12 +73,7 @@ function Home({navigation}) {
     */}
         <TouchableOpacity 
         style={{flex: 1, flexDirection: "column",  justifyContent: "center", alignItems: "center", padding: "6%", borderRadius: 100, borderWidth: 2, backgroundColor: "#56b643"}}
-        onPress={async ()=> {
-          props.setFsacoso(!props.isFsacoso);
-          const token = await AsyncStorage.getItem('JWT_TOKEN');
-          !props.isFsacoso ? fsacFriendList.forEach(friend => socket.emit("fsac?", ({token, userId, friendId: friend.id})))
-          : socket.emit("not fsacoso anymore", {token})
-        }}>    
+        onPress={() => toggleFsacoso()}>    
           {              
             props.isFsacoso ? 
             <AnimatedRingExample/>
@@ -83,6 +95,11 @@ function Home({navigation}) {
   
     const token = await AsyncStorage.getItem('JWT_TOKEN');
     socket.emit("gimme friends", token)
+  }
+
+  const amIFsacoso = async () => {
+    const token = await AsyncStorage.getItem('JWT_TOKEN');
+    socket.emit("am I fsacoso?", token)  
   }
 
   const authentication = async () => {
@@ -113,11 +130,14 @@ function Home({navigation}) {
   useEffect(() => {
 
     //AsyncStorage.clear()
+
+    
     
     authentication()
 
     gimmeFriends();
-    gimmeChatrooms()
+    gimmeChatrooms();
+    amIFsacoso();
     
     socket.on("untrusty socket", () => {
       Alert.alert("JWT token not valid", "you cheeky little bugger. Back to the login page you go", [{
@@ -149,7 +169,7 @@ function Home({navigation}) {
       
       console.log("Home.js: socket.emition: received fsac from ", userId)
 
-      dispatch(addNotification({screen:'friends'}))
+      dispatch(addNotification({screen:'fsacs'}))
 
       //Alert.alert(userId, "wants to fsac", [{
         //text: "hurray",
@@ -172,13 +192,18 @@ function Home({navigation}) {
 
     })
 
+    socket.on("you are fsacoso", bool => {
+      setFsacoso(bool)
+      bool ? showPersistentNotification() : cancelPersistentNotification()
+    })
+
     socket.on("accepted fsac", ({friendId, chatroomId}) => {
       
 
       console.log("Home.js: socket.emition: accepted fsac with ", friendId)
       
       dispatch(acceptFsac({friendId: userId, message: message}))
-      dispatch(addNotification({screen:'friends'}))
+      dispatch(addNotification({screen:'fsacs'}))
       
     })
 
@@ -204,6 +229,12 @@ function Home({navigation}) {
       console.log(friendId)
       dispatch(notFsacosoAnymore(friendId))
     })
+
+    //this is for controlling the fsac button through the notification
+    global.toggleFsacosoFromNotification = (state) => toggleFsacoso(state);
+    return () => {
+      global.toggleFsacosoFromNotification = undefined;
+    };
     
   },[])
 
