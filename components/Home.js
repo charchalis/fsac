@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -23,7 +23,7 @@ import FriendsNavigator from './FriendsNavigator'
 import FsacsScreen from './FsacsScreen'
 import Events from './Events'
 import socket from '../logic/socket'
-import { addMessageToChat, setChatrooms } from '../reducers/chatroomsReducer';
+import { addMessageToChat, setChatrooms, markMessagesAsSeen } from '../reducers/chatroomsReducer';
 
 
 const activateSocket = (token) =>{
@@ -47,6 +47,12 @@ function Home({navigation}) {
 
   const fsacFriendList = useSelector((state) => state.friendList.list) //TODO: right now all friends get notified.
                                                                     //should be just the ones defined in the settings
+  
+  const onChatroom = useSelector(state => state.onChatroom.onChatroom)
+  const onChatroomId = useSelector(state => state.onChatroom.chatroomId)
+  const onChatroomRef = useRef(onChatroom);
+  const onChatroomIdRef = useRef(onChatroomId);
+                                                                    
 
   const toggleFsacoso = async (nextState) => {
     const newState = nextState ?? !isFsacoso;
@@ -180,9 +186,8 @@ function Home({navigation}) {
 
     })
 
-    socket.on("received message", ({message}) => {
+    socket.on("received message", async ({message}) => {
       
-
       console.log("Home.js: socket.emition: receiverd private message from ", message.userId)
       console.log("message: ", message)
 
@@ -190,7 +195,17 @@ function Home({navigation}) {
 
       dispatch(addNotification({screen:'friends'}))
 
+      if(onChatroomRef.current && onChatroomIdRef.current === message.chatroomId)
+        socket.emit('seen new messages', {
+          token: await AsyncStorage.getItem('JWT_TOKEN'),
+          chatroomId: message.chatroomId,
+          seenDate: Date.now(),
+          friendId: message.userId
+        })
+      
     })
+
+    console.log('\n\n\n\nRETRIGGERED\n\n\n\n')
 
     socket.on("you are fsacoso", bool => {
       setFsacoso(bool)
@@ -230,6 +245,12 @@ function Home({navigation}) {
       dispatch(notFsacosoAnymore(friendId))
     })
 
+    socket.on("friend seen", ({chatroomId, userId, seenDate}) => {
+      console.log('friend seen')
+      dispatch(markMessagesAsSeen({chatroomId, userId, seenDate}))
+      
+    })
+
     //this is for controlling the fsac button through the notification
     global.toggleFsacosoFromNotification = (state) => toggleFsacoso(state);
     return () => {
@@ -238,16 +259,18 @@ function Home({navigation}) {
     
   },[])
 
-  const onChatroom = useSelector(state => state.onChatroom.onChatroom)
-  
+
   useEffect(() => {
+    onChatroomRef.current = onChatroom;
     if(onChatroom){
       console.log("navigating to chatscreen")
       navigation.navigate('ChatScreen')
     }
   }, [onChatroom]);
 
-
+  useEffect(() => {
+    onChatroomIdRef.current = onChatroomId;
+  }, [onChatroomId]);
   
   
 

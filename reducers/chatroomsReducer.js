@@ -9,7 +9,7 @@ const chatroomsReducer = createSlice({
     setChatrooms: (state, action) => {state.list = action.payload},
     addChatroom: (state, action) => {state.list.push(action.payload)},
     addMessageToChat: (state, action) => {
-      const { chatroomId, message } = action.payload;
+      const { chatroomId, message, userId } = action.payload;
       const chatroom = state.list.find(room => room.id === chatroomId);
 
       console.log("AAAAAAAAAAA " + chatroom)
@@ -22,9 +22,28 @@ const chatroomsReducer = createSlice({
         console.log("AAAAAAAAAAAa")
         chatroom.messages.push(message);
       }
-    }
+    },
+    markMessagesAsSeen: (state, action) => {
+      const { chatroomId, seenDate, userId } = action.payload;
+      state.list = state.list.map(chatroom => {
+        if (chatroom.id !== chatroomId) return chatroom;
+    
+        const updatedMessages = (chatroom.messages || []).map(message => {
+          if (message.userId !== userId && message.date <= seenDate) {
+            return { ...message, seen: true };
+          }
+          return message;
+        });
+    
+        return {
+          ...chatroom,
+          messages: updatedMessages
+        };
+      });
+    },
+
   },
 });
 
-export const { setChatrooms, addChatroom, addMessageToChat } = chatroomsReducer.actions;
+export const { setChatrooms, addChatroom, addMessageToChat, markMessagesAsSeen } = chatroomsReducer.actions;
 export default chatroomsReducer.reducer;

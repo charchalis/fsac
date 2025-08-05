@@ -15,6 +15,8 @@ import Message from './Message'
 import socket from '../logic/socket'
 import { addMessageToChat } from '../reducers/chatroomsReducer';
 import BouncingDots from './BouncingDots';
+import { useIsFocused } from '@react-navigation/native';
+
 
 
 const ChatScreen = ({navigation}) => {
@@ -31,13 +33,31 @@ const ChatScreen = ({navigation}) => {
   const [lastSeenMessageId, setLastSeenMessageId] = useState(-1)
 
   const [amTyping, setAmTyping] = useState(false)
+
+  const focused = useIsFocused();
+
+  useEffect(() => {
+    
+    if(focused){
+      const notMineMessages = chatroom.messages.filter(message => message.userId !== myUser.id )
+      if(!notMineMessages[notMineMessages.length - 1].seen){
+        reportSeenMessages()
+        chatroom.messages.filter(m => !m.seen && m.userId !== myUser.id).forEach(m => m.seen = true)
+      }
+    }
+  }, [focused]) 
   
 
   const flatListRef = useRef();
 
+  const reportSeenMessages = async () => {
+    const token = await AsyncStorage.getItem('JWT_TOKEN');
+    socket.emit('seen new messages', {token , chatroomId, seenDate: Date.now(), friendId: friend.id})
+  }
+
   const dealWithMessageButton = async () => {
 
-    console.log("dealing with message")
+    if(newMessageText === '') return
 
     const token = await AsyncStorage.getItem('JWT_TOKEN');
     console.log("-------------------sending message------------------")
@@ -64,12 +84,6 @@ const ChatScreen = ({navigation}) => {
 
   useEffect(() => {
 
-    //TODO:
-    // socket.on("friend seen", ({chatroomId, userId, smallestMessageId, biggestMessageId}) => {
-    //   if(chatroomId !== friend.chatroomId) return 
-    //   console.log("friend seen")
-    //   //setMessages(messages)
-    // })
 
     socket.on("backend received message successfully", messageId => {
       console.log("sent message successfully")
