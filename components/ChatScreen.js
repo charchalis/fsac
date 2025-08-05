@@ -8,7 +8,8 @@ import {newMessage, isTyping} from '../reducers/friendListReducer'
 
 
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import { faBars, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faEnvelope, faCheck, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck as faCircleCheckRegular } from '@fortawesome/free-regular-svg-icons';
 
 
 import Message from './Message'
@@ -148,7 +149,7 @@ const ChatScreen = ({navigation}) => {
             <TextInput  onChangeText={setNewMessageText} value={newMessageText} style={{flex: 1,margin: 4, backgroundColor: "#091212", borderRadius: 25}}/>
             <TouchableOpacity style={{backgroundColor:"#383", justifyContent: 'center', alignItems: 'center', borderRadius: 10, margin: 5, padding: 10}}
               onPress={() => {dealWithMessageButton() }}>
-              <FontAwesomeIcon icon={faEnvelope} color={'#ffffffaa'} size={25} style={{}} />
+              <FontAwesomeIcon icon={faEnvelope} color={'#ffffffaa'} size={25} />
             </TouchableOpacity>
           </View>
         </View>

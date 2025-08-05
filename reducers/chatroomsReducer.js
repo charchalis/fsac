@@ -12,14 +12,10 @@ const chatroomsReducer = createSlice({
       const { chatroomId, message, userId } = action.payload;
       const chatroom = state.list.find(room => room.id === chatroomId);
 
-      console.log("AAAAAAAAAAA " + chatroom)
-      console.log(chatroomId)
-      console.log(state.list)
       if (chatroom) {
         if (!chatroom.messages) {
           chatroom.messages = [];
         }
-        console.log("AAAAAAAAAAAa")
         chatroom.messages.push(message);
       }
     },

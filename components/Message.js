@@ -13,7 +13,7 @@ const Message = React.memo(({message, mine}) => {
             <Text style={{fontSize: 15}}>{message.text}</Text>
             
             <View style={{flexDirection: 'row', alignSelf:'flex-end'}}>
-                <Text style={{fontSize: 12, marginRight: 3}}>{date.getHours()} : {date.getMinutes()}</Text>
+                <Text style={{fontSize: 12, marginRight: 3}}>{(date.getHours() < 10 ? '0' : '') + date.getHours()}:{(date.getMinutes() < 10 ? '0' : '') + date.getMinutes()}</Text>
                 {
                     mine ?  
                     (<Text style={{fontSize: 12}}>{message.seen ? 'seen' : 'not seen'} </Text>): ''
