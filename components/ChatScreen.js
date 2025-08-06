@@ -135,7 +135,8 @@ const ChatScreen = ({navigation}) => {
     return (
         <View style={{ flex: 1, alignItems: 'stretch', justifyContent: 'space-between', backgroundColor: "#091212"}}>
 
-          <ScrollView ref={flatListRef} style={{flex:1}}
+          <ScrollView ref={flatListRef} style={{ flex: 1 }}
+          contentContainerStyle={{flexGrow: 1, justifyContent: 'flex-end'}}
           onContentSizeChange={() => flatListRef.current.scrollToEnd()}>
 
           
