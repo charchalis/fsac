@@ -8,8 +8,7 @@ import {newMessage, isTyping} from '../reducers/friendListReducer'
 
 
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import { faBars, faEnvelope, faCheck, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-import { faCircleCheck as faCircleCheckRegular } from '@fortawesome/free-regular-svg-icons';
+import { faBars, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 
 import Message from './Message'
@@ -30,8 +29,6 @@ const ChatScreen = ({navigation}) => {
   const dispatch = useDispatch();
 
   const [newMessageText, setNewMessageText] = useState('')
-  
-  const [lastSeenMessageId, setLastSeenMessageId] = useState(-1)
 
   const [amTyping, setAmTyping] = useState(false)
 
@@ -40,8 +37,8 @@ const ChatScreen = ({navigation}) => {
   useEffect(() => {
     
     if(focused){
-      const notMineMessages = chatroom.messages.filter(message => message.userId !== myUser.id )
-      if(!notMineMessages[notMineMessages.length - 1].seen){
+      const notMineMessages = (chatroom.messages || []).filter(message => message.userId !== myUser.id )
+      if(notMineMessages.length > 0 && !notMineMessages[notMineMessages.length - 1].seen){
         reportSeenMessages()
         chatroom.messages.filter(m => !m.seen && m.userId !== myUser.id).forEach(m => m.seen = true)
       }
@@ -85,10 +82,21 @@ const ChatScreen = ({navigation}) => {
 
   useEffect(() => {
 
+    socket.on("received message", async ({message}) => {
+      
+      console.log("Chatscreen.js: socket.emition: receiverd private message from ", message.userId)
+      console.log("message: ", message)
 
-    socket.on("backend received message successfully", messageId => {
-      console.log("sent message successfully")
+      if(focused){
+        socket.emit('seen new messages', {
+          token: await AsyncStorage.getItem('JWT_TOKEN'),
+          chatroomId: message.chatroomId,
+          seenDate: Date.now(),
+          friendId: message.userId
+        })
+      }
     })
+
     
     // add friend image to header
     navigation.setOptions({ 

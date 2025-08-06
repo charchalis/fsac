@@ -23,7 +23,7 @@ import FriendsNavigator from './FriendsNavigator'
 import FsacsScreen from './FsacsScreen'
 import Events from './Events'
 import socket from '../logic/socket'
-import { addMessageToChat, setChatrooms, markMessagesAsSeen } from '../reducers/chatroomsReducer';
+import { addMessageToChat, setChatrooms, markMessagesAsSeen, markMessageAsDelivered } from '../reducers/chatroomsReducer';
 
 
 const activateSocket = (token) =>{
@@ -195,14 +195,14 @@ function Home({navigation}) {
 
       dispatch(addNotification({screen:'friends'}))
 
-      if(onChatroomRef.current && onChatroomIdRef.current === message.chatroomId)
-        socket.emit('seen new messages', {
-          token: await AsyncStorage.getItem('JWT_TOKEN'),
-          chatroomId: message.chatroomId,
-          seenDate: Date.now(),
-          friendId: message.userId
-        })
-      
+      // if(onChatroomRef.current && onChatroomIdRef.current === message.chatroomId){
+      //   socket.emit('seen new messages', {
+      //     token: await AsyncStorage.getItem('JWT_TOKEN'),
+      //     chatroomId: message.chatroomId,
+      //     seenDate: Date.now(),
+      //     friendId: message.userId
+      //   })
+      // }
     })
 
     console.log('\n\n\n\nRETRIGGERED\n\n\n\n')
@@ -249,6 +249,11 @@ function Home({navigation}) {
       console.log('friend seen')
       dispatch(markMessagesAsSeen({chatroomId, userId, seenDate}))
       
+    })
+
+    socket.on("backend received message successfully", async message => {
+      console.log("sent message successfully")
+      dispatch(markMessageAsDelivered(message))
     })
 
     //this is for controlling the fsac button through the notification
