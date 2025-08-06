@@ -140,7 +140,8 @@ const ChatScreen = ({navigation}) => {
 
           
             {chatroom.messages ? chatroom.messages.map((message, index) =>
-                <Message message={message} key={index} mine={myUser.id === message.userId}/>
+                <Message message={message} key={index} mine={myUser.id === message.userId}
+                />
             ) : null}
 
           {friend.typing ?

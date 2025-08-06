@@ -11,7 +11,7 @@ const Message = React.memo(({message, mine}) => {
 
   
     return (
-        <View style={[{ minWidth: 70, padding: 7, paddingBottom: 2, borderRadius: 12, margin: 5}, 
+        <View style={[{ maxWidth:'85%', minWidth: 70, padding: 7, paddingBottom: 2, borderRadius: 12, margin: 5}, 
         mine ? {alignSelf: 'flex-end', backgroundColor: "#353"} :
         {alignSelf: 'flex-start', backgroundColor: "#222"}]}>
 
