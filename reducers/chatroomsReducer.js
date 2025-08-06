@@ -17,7 +17,6 @@ const chatroomsReducer = createSlice({
           chatroom.messages = [];
         }
         chatroom.messages.push(message);
-        console.log('pushed new message')
       }
     },
     markMessageAsDelivered: (state, action) => {  //only marks one message as delivered
@@ -27,7 +26,6 @@ const chatroomsReducer = createSlice({
         if (chatroom.id !== chatroomId) return chatroom;
 
         const updatedMessages = (chatroom.messages || []).map(message => {
-          console.log(message.id)
           if (message.date === messageDate){
             return { ...message, delivered: true, id: messageId };
           }

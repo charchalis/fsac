@@ -110,7 +110,7 @@ const ChatScreen = ({navigation}) => {
             </View>,
 
       
-      headerRight: () => <TouchableOpacity><FontAwesomeIcon icon={faBars} color={"#fff"} size={30} /></TouchableOpacity>
+      headerRight: () => <TouchableOpacity><FontAwesomeIcon icon={faBars} color={"#363"} size={30} /></TouchableOpacity>
     }); 
 
         
@@ -144,8 +144,8 @@ const ChatScreen = ({navigation}) => {
             ) : null}
 
           {friend.typing ?
-            <View style={{ minHeight: 40, padding: 7, paddingTop: 3, paddingBottom: 3, borderRadius: 15, margin: 5, alignSelf: 'flex-start', alignItems: 'center', backgroundColor: "#00f", flexDirection: 'row'}}>
-              <BouncingDots color={'#fff'}/>
+            <View style={{ minHeight: 40, padding: 7, paddingTop: 3, paddingBottom: 3, borderRadius: 15, margin: 5, alignSelf: 'flex-start', alignItems: 'center', backgroundColor: "#222", flexDirection: 'row'}}>
+              <BouncingDots color={'#555'}/>
             </View>
           : null}
 
@@ -153,9 +153,9 @@ const ChatScreen = ({navigation}) => {
 
           
 
-          <View style={{flexDirection: 'row', backgroundColor: "#555"}}>
-            <TextInput  onChangeText={setNewMessageText} value={newMessageText} style={{flex: 1,margin: 4, backgroundColor: "#091212", borderRadius: 25}}/>
-            <TouchableOpacity style={{backgroundColor:"#383", justifyContent: 'center', alignItems: 'center', borderRadius: 10, margin: 5, padding: 10}}
+          <View style={{flexDirection: 'row', backgroundColor: null, alignItems: 'center'}}>
+            <TextInput  onChangeText={setNewMessageText} value={newMessageText} placeholder="Message" style={{flex: 1, fontSize: 17, maxHeight: 40, paddingLeft: 20, paddingBottom: 4, paddingTop: 4, margin: 4, backgroundColor: "#222", borderRadius: 25}}/>
+            <TouchableOpacity style={{backgroundColor:"#363", justifyContent: 'center', alignItems: 'center', borderRadius: 10, margin: 5, padding: 7, maxHeight: 40}}
               onPress={() => {dealWithMessageButton() }}>
               <FontAwesomeIcon icon={faEnvelope} color={'#ffffffaa'} size={25} />
             </TouchableOpacity>
