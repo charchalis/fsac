@@ -8,13 +8,15 @@ import {newMessage, isTyping} from '../reducers/friendListReducer'
 
 
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 
 import Message from './Message'
 import socket from '../logic/socket'
 import { addMessageToChat } from '../reducers/chatroomsReducer';
 import BouncingDots from './BouncingDots';
+import { useIsFocused } from '@react-navigation/native';
+
 
 
 const ChatScreen = ({navigation}) => {
@@ -27,17 +29,33 @@ const ChatScreen = ({navigation}) => {
   const dispatch = useDispatch();
 
   const [newMessageText, setNewMessageText] = useState('')
-  
-  const [lastSeenMessageId, setLastSeenMessageId] = useState(-1)
 
   const [amTyping, setAmTyping] = useState(false)
+
+  const focused = useIsFocused();
+
+  useEffect(() => {
+    
+    if(focused){
+      const notMineMessages = (chatroom.messages || []).filter(message => message.userId !== myUser.id )
+      if(notMineMessages.length > 0 && !notMineMessages[notMineMessages.length - 1].seen){
+        reportSeenMessages()
+        chatroom.messages.filter(m => !m.seen && m.userId !== myUser.id).forEach(m => m.seen = true)
+      }
+    }
+  }, [focused]) 
   
 
   const flatListRef = useRef();
 
+  const reportSeenMessages = async () => {
+    const token = await AsyncStorage.getItem('JWT_TOKEN');
+    socket.emit('seen new messages', {token , chatroomId, seenDate: Date.now(), friendId: friend.id})
+  }
+
   const dealWithMessageButton = async () => {
 
-    console.log("dealing with message")
+    if(newMessageText === '') return
 
     const token = await AsyncStorage.getItem('JWT_TOKEN');
     console.log("-------------------sending message------------------")
@@ -64,16 +82,21 @@ const ChatScreen = ({navigation}) => {
 
   useEffect(() => {
 
-    //TODO:
-    // socket.on("friend seen", ({chatroomId, userId, smallestMessageId, biggestMessageId}) => {
-    //   if(chatroomId !== friend.chatroomId) return 
-    //   console.log("friend seen")
-    //   //setMessages(messages)
-    // })
+    socket.on("received message", async ({message}) => {
+      
+      console.log("Chatscreen.js: socket.emition: receiverd private message from ", message.userId)
+      console.log("message: ", message)
 
-    socket.on("backend received message successfully", messageId => {
-      console.log("sent message successfully")
+      if(focused && message.chatroomId === chatroomId){
+        socket.emit('seen new messages', {
+          token: await AsyncStorage.getItem('JWT_TOKEN'),
+          chatroomId: message.chatroomId,
+          seenDate: Date.now(),
+          friendId: message.userId
+        })
+      }
     })
+
     
     // add friend image to header
     navigation.setOptions({ 
@@ -87,7 +110,7 @@ const ChatScreen = ({navigation}) => {
             </View>,
 
       
-      headerRight: () => <TouchableOpacity><FontAwesomeIcon icon={faBars} color={"#fff"} size={30} /></TouchableOpacity>
+      headerRight: () => <TouchableOpacity><FontAwesomeIcon icon={faBars} color={"#363"} size={30} /></TouchableOpacity>
     }); 
 
         
@@ -98,49 +121,7 @@ const ChatScreen = ({navigation}) => {
 
   }, []);
 
-  /*
-  useEffect(() => {
-
-    if(!messages) return
-
-    if(lastSeenMessageId === -1){
-
-      const unseenMessages = messages.filter(
-        msg => !msg.seen && msg.userId !== myUser.id
-      );
-      
-      const smallestUnseenMessageId = unseenMessages.length > 0
-        ? unseenMessages.reduce((min, cur) => (cur.id < min.id ? cur : min))
-        : null;
-
-      console.log(messages)
-      console.log("smallest: " + smallestUnseenMessageId)
-     
-      if(smallestUnseenMessageId) setLastSeenMessageId(smallestUnseenMessageId - 1)
-      else return
-     
-    }
-    
-    const biggestUnseenMessageId = messages[messages.length - 1].id
-    console.log("BPH", messages[messages.length - 1])
-
-    console.log("smallest: ", lastSeenMessageId)
-    console.log("biggest: ", biggestUnseenMessageId)
-    
-    if(biggestUnseenMessageId > lastSeenMessageId){
- 
-      console.log("reporting seen messages")
-      
-      //report seen messages
-      AsyncStorage.getItem('JWT_TOKEN').then( token => 
-        socket.emit("seen new messages", {token, chatroomId: friend.chatroomId, friendId: friend.id, smallestMessageId: lastSeenMessageId, biggestMessageId: biggestUnseenMessageId}))
-      setLastSeenMessageId(biggestUnseenMessageId)
-
-    }
-
-  }, [messages]);
-*/
-
+  
   useEffect(() => {
     setAmTyping(newMessageText != '')
   }, [newMessageText])
@@ -159,12 +140,13 @@ const ChatScreen = ({navigation}) => {
 
           
             {chatroom.messages ? chatroom.messages.map((message, index) =>
-                <Message message={message} key={index} mine={myUser.id === message.userId}/>
+                <Message message={message} key={index} mine={myUser.id === message.userId}
+                />
             ) : null}
 
           {friend.typing ?
-            <View style={{ minHeight: 40, padding: 7, paddingTop: 3, paddingBottom: 3, borderRadius: 15, margin: 5, alignSelf: 'flex-start', alignItems: 'center', backgroundColor: "#00f", flexDirection: 'row'}}>
-              <BouncingDots color={'#fff'}/>
+            <View style={{ minHeight: 40, padding: 7, paddingTop: 3, paddingBottom: 3, borderRadius: 15, margin: 5, alignSelf: 'flex-start', alignItems: 'center', backgroundColor: "#222", flexDirection: 'row'}}>
+              <BouncingDots color={'#555'}/>
             </View>
           : null}
 
@@ -172,11 +154,11 @@ const ChatScreen = ({navigation}) => {
 
           
 
-          <View style={{flexDirection: 'row', backgroundColor: "#555", paddingBottom: 5}}>
-            <TextInput  onChangeText={setNewMessageText} value={newMessageText} style={{flex: 1,margin: 4, backgroundColor: "#091212", borderRadius: 25}}/>
-            <TouchableOpacity style={{backgroundColor:"#383", justifyContent: 'center', borderRadius: 10, margin: 5, padding: 5}}
+          <View style={{flexDirection: 'row', backgroundColor: null, alignItems: 'center'}}>
+            <TextInput  onChangeText={setNewMessageText} value={newMessageText} placeholder="Message" style={{flex: 1, fontSize: 17, maxHeight: 40, paddingLeft: 20, paddingBottom: 4, paddingTop: 4, margin: 4, backgroundColor: "#222", borderRadius: 25}}/>
+            <TouchableOpacity style={{backgroundColor:"#363", justifyContent: 'center', alignItems: 'center', borderRadius: 10, margin: 5, padding: 7, maxHeight: 40}}
               onPress={() => {dealWithMessageButton() }}>
-              <Text style={{fontSize: 25}}>✉️</Text>
+              <FontAwesomeIcon icon={faEnvelope} color={'#ffffffaa'} size={25} />
             </TouchableOpacity>
           </View>
         </View>

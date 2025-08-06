@@ -9,22 +9,57 @@ const chatroomsReducer = createSlice({
     setChatrooms: (state, action) => {state.list = action.payload},
     addChatroom: (state, action) => {state.list.push(action.payload)},
     addMessageToChat: (state, action) => {
-      const { chatroomId, message } = action.payload;
+      const { chatroomId, message, userId } = action.payload;
       const chatroom = state.list.find(room => room.id === chatroomId);
 
-      console.log("AAAAAAAAAAA " + chatroom)
-      console.log(chatroomId)
-      console.log(state.list)
       if (chatroom) {
         if (!chatroom.messages) {
           chatroom.messages = [];
         }
-        console.log("AAAAAAAAAAAa")
         chatroom.messages.push(message);
       }
-    }
+    },
+    markMessageAsDelivered: (state, action) => {  //only marks one message as delivered
+      const {chatroomId, messageId, messageDate} = action.payload;
+      
+      state.list = state.list.map(chatroom => {
+        if (chatroom.id !== chatroomId) return chatroom;
+
+        const updatedMessages = (chatroom.messages || []).map(message => {
+          if (message.date === messageDate){
+            return { ...message, delivered: true, id: messageId };
+          }
+          return message;
+        });
+    
+        return {
+          ...chatroom,
+          messages: updatedMessages
+        };
+      });
+    },
+
+    markMessagesAsSeen: (state, action) => { //marks multiple messages as seen
+      const { chatroomId, seenDate, userId } = action.payload;
+      state.list = state.list.map(chatroom => {
+        if (chatroom.id !== chatroomId) return chatroom;
+    
+        const updatedMessages = (chatroom.messages || []).map(message => {
+          if (message.userId !== userId && message.date <= seenDate) {
+            return { ...message, seen: true };
+          }
+          return message;
+        });
+    
+        return {
+          ...chatroom,
+          messages: updatedMessages
+        };
+      });
+    },
+
   },
 });
 
-export const { setChatrooms, addChatroom, addMessageToChat } = chatroomsReducer.actions;
+export const { setChatrooms, addChatroom, addMessageToChat, markMessageAsDelivered, markMessagesAsSeen } = chatroomsReducer.actions;
 export default chatroomsReducer.reducer;
