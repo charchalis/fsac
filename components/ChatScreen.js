@@ -87,7 +87,7 @@ const ChatScreen = ({navigation}) => {
       console.log("Chatscreen.js: socket.emition: receiverd private message from ", message.userId)
       console.log("message: ", message)
 
-      if(focused){
+      if(focused && message.chatroomId === chatroomId){
         socket.emit('seen new messages', {
           token: await AsyncStorage.getItem('JWT_TOKEN'),
           chatroomId: message.chatroomId,
