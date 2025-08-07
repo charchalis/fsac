@@ -110,10 +110,8 @@ const FriendCard = (props) => {
       <View style={{flex:1, flexDirection: 'row' }}>
 
 
-        <View style={{backgroundColor: null, margin: 5, marginRight: 15}}>
-          <View style={{backgroundColor: "#fff", borderRadius: 27.5, padding: 27.5, backgroundColor: "#fff", position: 'absolute'}}>
-            {friend.fsacoso ? <AnimatedRingExample /> : null}
-          </View>
+        <View style={{backgroundColor: null, margin: 5, marginRight: 15, justifyContent: "center", alignItems: "center"}}>
+          <AnimatedRingExample active={friend.fsacoso}/>
           <Image source={{ uri: image }} style={{ width: 55, height: 55,borderRadius: 30}} />
         </View>
 

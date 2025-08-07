@@ -12,7 +12,7 @@ import Animated, {
     
   } from 'react-native-reanimated';
 
-const Ring = ({ delay }) => {
+const Ring = ({ delay, active }) => {
     const ring = useSharedValue(0);
   
     const ringStyle = useAnimatedStyle(() => {
@@ -25,32 +25,40 @@ const Ring = ({ delay }) => {
         ],
       };
     });
+    
     useEffect(() => {
-      ring.value = withDelay(
-        delay,
-        withRepeat(
-          withTiming(1, {
-            duration: 3000,
-          }),
-          -1,
-          false
-        )
-      );
-    }, []);
+      if (active) {
+        ring.value = withDelay(
+          delay,
+          withRepeat(
+            withTiming(1, {
+              duration: 3000,
+            }),
+            -1,
+            false
+          )
+        );
+      } else {
+        ring.value = 0; // Reset to original state when not active
+      }
+    }, [active]);
+
     return <Animated.View style={[{position: "absolute",borderRadius: 100, borderColor: "#fff", borderWidth: 5, backgroundColor: null, minWidth: "20%", height: 80, width: 80}, ringStyle]} />;
 }
 
-function AnimatedRingExample() {
+function AnimatedRingExample({active = true}) {
     return (
       <View
         style={{
           alignItems: "center",
           justifyContent: "center",
           flexDirection: "column",
+          position: 'absolute',
+          zIndex: -1
         }}
       >
         
-        <Ring delay={0} />
+        <Ring delay={0} active={active}/>
       </View>
     );
 }

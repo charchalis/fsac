@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { Text, View, TouchableOpacity, Alert } from 'react-native';
+import { Text, View, TouchableOpacity, Alert, Image } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import { faEye, faPerson, faHouse, faGear } from "@fortawesome/free-solid-svg-icons";
@@ -24,6 +24,7 @@ import FsacsScreen from './FsacsScreen'
 import Events from './Events'
 import socket from '../logic/socket'
 import { addMessageToChat, setChatrooms, markMessagesAsSeen, markMessageAsDelivered } from '../reducers/chatroomsReducer';
+import SpinningImage from './SpinningImage';
 
 
 const activateSocket = (token) =>{
@@ -72,17 +73,16 @@ function Home({navigation}) {
   };
 
   const FsacButton = (props) =>
-      <View style={{alignSelf: 'center', borderRadius: 30, borderColor: "#56b643", borderWidth: 2, width: 60, height: 60}}>
+      <View style={{alignSelf: 'center',justifyContent: "center", alignItems: "center", borderRadius: 100, borderColor: "#56b643", borderWidth: 2}}>
     
+        <AnimatedRingExample active={props.isFsacoso}/>
+            
         <TouchableOpacity 
-        style={{flex: 1, flexDirection: "column",  justifyContent: "center", alignItems: "center", padding: "6%", borderRadius: 100, borderWidth: 2, borderColor: '#091212', backgroundColor: '#56b643'}}
+        style={{flexDirection: "column",  justifyContent: "center", alignItems: "center", padding: "6%", borderRadius: 100, borderWidth: 2, borderColor: '#091212', backgroundColor: '#56b643', width: 60, height: 60}}
         onPress={() => toggleFsacoso()}>    
-          {              
-            props.isFsacoso ? 
-            <AnimatedRingExample/>
-            :
-            <Text style={{fontSize: 20, color:"#091212", fontWeight: "600", fontStyle: "italic"}}>fsac</Text>     
-          }       
+          
+            <SpinningImage spinning={props.isFsacoso} imagePath='../assets/logo.png'/>
+                 
         </TouchableOpacity> 
     </View> 
   
