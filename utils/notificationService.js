@@ -16,7 +16,7 @@ export async function showPersistentNotification() {
     body: 'Your friends can see your fsacosity',
     android: {
       channelId,
-      smallIcon: 'ic_launcher', // Must exist in res/drawable
+      smallIcon: 'ic_notification', // Must exist in res/drawable
       ongoing: true,
       autoCancel: false,
       pressAction: { id: 'default' },
