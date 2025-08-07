@@ -72,10 +72,10 @@ function Home({navigation}) {
   };
 
   const FsacButton = (props) =>
-      <View style={{alignSelf: 'center', borderRadius: 30, borderColor: "#56b643", borderWidth: 2, backgroundColor: "#fff", width: 60, height: 60}}>
+      <View style={{alignSelf: 'center', borderRadius: 30, borderColor: "#56b643", borderWidth: 2, width: 60, height: 60}}>
     
         <TouchableOpacity 
-        style={{flex: 1, flexDirection: "column",  justifyContent: "center", alignItems: "center", padding: "6%", borderRadius: 100, borderWidth: 2, backgroundColor: "#56b643"}}
+        style={{flex: 1, flexDirection: "column",  justifyContent: "center", alignItems: "center", padding: "6%", borderRadius: 100, borderWidth: 2, borderColor: '#091212', backgroundColor: '#56b643'}}
         onPress={() => toggleFsacoso()}>    
           {              
             props.isFsacoso ? 
@@ -289,8 +289,8 @@ function Home({navigation}) {
         borderRadius: 15,
         borderWidth: 2,
         borderTopWidth: 2,
-        borderColor: "#56b643",
-        borderTopColor: "#56b643"
+        borderColor: "#222",
+        borderTopColor: "#222"
         //,position: "absolute"
       },
 
@@ -305,9 +305,8 @@ function Home({navigation}) {
         alignItems: 'center',
         marginTop: 5,
       },
-
-      tabBarActiveTintColor: '#56b643',
-
+      tabBarInactiveTintColor: '#333',
+      tabBarActiveTintColor: '#363'
     }}>
 
 

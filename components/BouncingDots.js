@@ -32,8 +32,8 @@ const BouncingDots = (props) => {
             //minHeight: 30,
         },
         dot: {
-            width: 10,
-            height: 10,
+            width: props.size,
+            height: props.size,
             borderRadius: 5,
             backgroundColor: props.color,
             marginLeft: 1,

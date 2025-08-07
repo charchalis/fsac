@@ -147,7 +147,7 @@ const ChatScreen = ({navigation}) => {
 
           {friend.typing ?
             <View style={{ minHeight: 40, padding: 7, paddingTop: 3, paddingBottom: 3, borderRadius: 15, margin: 5, alignSelf: 'flex-start', alignItems: 'center', backgroundColor: "#222", flexDirection: 'row'}}>
-              <BouncingDots color={'#555'}/>
+              <BouncingDots color={'#555'} size={10}/>
             </View>
           : null}
 

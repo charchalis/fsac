@@ -34,10 +34,10 @@ const FsacsScreen = ({navigation}) => {
         <View style={styles.window}>
           {events.length === 0 && individualFsacs.length === 0 ?
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-              <FontAwesomeIcon icon={faJoint} color={'#ffffff55'} size={100} style={{marginBottom: 20}} />
-              <Text style={{fontSize: 20, color: "#ffffff55"}}>No one wants to fsac 🥺</Text>
-              <Text style={{fontSize: 20, color: "#ffffff55"}}>Press the BIG BUTTON </Text>
-              <Text style={{fontSize: 20, color: "#ffffff55"}}>And wait for someone to respond 🗿</Text>
+              <FontAwesomeIcon icon={faJoint} color={'#ffffff19'} size={100} style={{marginBottom: 20}} />
+              <Text style={{fontSize: 20, color: "#ffffff19"}}>No one wants to fsac 🥺</Text>
+              <Text style={{fontSize: 20, color: "#ffffff19"}}>Press the BIG BUTTON </Text>
+              <Text style={{fontSize: 20, color: "#ffffff19"}}>And wait for someone to respond 🗿</Text>
             </View>
           :
             <ScrollView >

@@ -110,39 +110,32 @@ const FriendCard = (props) => {
       <View style={{flex:1, flexDirection: 'row' }}>
 
 
-        <View>
-
-
-          <View style={{width: 60, height: 60 , backgroundColor: "#fff", borderRadius: 30, margin: 30, padding: 30, marginRight: 15, backgroundColor: "#fff", position: 'absolute'}}>
-            <View >
+        <View style={{backgroundColor: null, margin: 5, marginRight: 15}}>
+          <View style={{backgroundColor: "#fff", borderRadius: 27.5, padding: 27.5, backgroundColor: "#fff", position: 'absolute'}}>
             {friend.fsacoso ? <AnimatedRingExample /> : null}
-            </View>
           </View>
-          <Image source={{ uri: image }} style={{ width: 60, height: 60 , backgroundColor: "#fff", borderRadius: 30, margin: 30, marginRight: 15}} />
-
+          <Image source={{ uri: image }} style={{ width: 55, height: 55,borderRadius: 30}} />
         </View>
 
-        <View style={{alignSelf: 'center', justifyContent: 'space-around'}}>
 
-          
+        <View style={{alignSelf: 'stretch', justifyContent: 'space-between', marginTop: 2}}>
 
-          <View style={{flexDirection: 'row', alignSelf: 'center', alignItems: 'center'}}>
-            <Text style={{fontSize: 20}}>{friend.username}</Text>
-            <Text style={{fontSize: 13, marginLeft: 10, alignSelf: 'center'}}>{friend.firstName + " " + friend.lastName}</Text>
+          <View style={{flexDirection: 'row', alignSelf: 'flex-start', alignItems: 'flex-start'}}>
+            <Text style={{fontSize: 20, fontWeight: 'bold', color: '#363'}}>{friend.username}</Text>
+            <Text style={{fontSize: 13, marginLeft: 10, alignSelf: 'center', color: '#555'}}>{friend.firstName + " " + friend.lastName}</Text>
           </View>
 
-          <View style={{marginTop: 10, minHeight: 20}}>
+          <View style={{marginBottom: 8, minHeight: 20}}>
             {
               friend.typing ?
-              // <Text style={{fontSize: 13, color: '#555' }}>typing...</Text>
               <View style={{flexDirection: 'row', marginTop: 5}}>
-                <BouncingDots color={'#555'}/>
+                <BouncingDots color={'#555'} size={7}/>
               </View>
               : 
               chatroom && chatroom.messages.length > 0 ?  
-                <Text style={{fontSize: 13, color: '#555'}}>{
+                <Text style={{fontSize: 13, color: '#555', maxWidth: '85%' }} numberOfLines={1}>{
                   (chatroom.messages[chatroom.messages.length - 1].userId === userId ? "You: " : "") + 
-                  chatroom.messages[chatroom.messages.length - 1].text 
+                  chatroom.messages[chatroom.messages.length - 1].text
                 }</Text> :
                 <Text style={{fontSize: 13, color: '#555'}}>no messages</Text>
             }
@@ -166,8 +159,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'stretch',
     paddingRight: 30,
-    borderColor: "#56b643",
-    borderBottomWidth: 1
+    borderColor: "#222",
+    borderBottomWidth: 1,
   },
   friendContainerFsacing:{
     backgroundColor: '#f00'

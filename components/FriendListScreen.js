@@ -52,7 +52,7 @@ const FriendListScreen = ({navigation}) => {
           />))} 
 
         </ScrollView>
-        <TouchableOpacity class="addFriendButton" style={styles.button}
+        <TouchableOpacity class="addFriendButton" style={[styles.button, {backgroundColor: '#363'}]}
           onPress={() => navigation.navigate('AddFriendScreen')}>
           <Text>Add friend</Text>
         </TouchableOpacity>
